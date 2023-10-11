@@ -7,7 +7,7 @@ const createUserZodSchema = z.object({
     email: z.string({ required_error: "Email is required." }).email(),
     password: z.string({ required_error: "Password is required." }),
     role: z
-      .enum([...Object.values(Role)] as [string, ...string[]], {
+      .enum([...Role] as [string, ...string[]], {
         required_error: "Role must be HOUSE_RENTER or HOUSE_OWNER",
       })
       .optional(),

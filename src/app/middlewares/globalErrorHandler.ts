@@ -1,15 +1,16 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unused-vars*/
+/* eslint-disable no-unused-expressions*/
+/* eslint-disable no-console*/
+
 import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
 import config from "../../config";
-import ApiError from "../../errors/ApiError";
-import handleValidationError from "../../errors/handleValidationError";
-
-import { Prisma } from "@prisma/client";
-import { ZodError } from "zod";
 import { IGenericErrorMessage } from "../../interfaces/error";
+import handleValidationError from "../../errors/handleValidationError";
+import { ZodError } from "zod";
 import handleZodError from "../../errors/handleZodError";
+import ApiError from "../../errors/ApiError";
+import { Prisma } from "@prisma/client";
 import handleClientError from "../../errors/handleClientError";
 
 const globalErrorHandler: ErrorRequestHandler = (
@@ -19,8 +20,8 @@ const globalErrorHandler: ErrorRequestHandler = (
   next: NextFunction
 ) => {
   config.env === "development"
-    ? console.log(`🐱‍🏍 globalErrorHandler ~~`, { error })
-    : console.log(`🐱‍🏍 globalErrorHandler ~~`, error);
+    ? console.log("globalErrorHandler", error)
+    : console.log("globalErrorHanler", error);
 
   let statusCode = 500;
   let message = "Something went wrong !";
@@ -44,7 +45,7 @@ const globalErrorHandler: ErrorRequestHandler = (
   } else if (error instanceof ApiError) {
     statusCode = error?.statusCode;
     message = error.message;
-    errorMessages = error?.message
+    errorMessages = error.message
       ? [
           {
             path: "",
