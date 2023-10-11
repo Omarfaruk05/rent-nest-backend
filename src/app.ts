@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/v1", routes);
 app.get("/", (req, res) => {
-  res.send("Core service server started succssfully");
+  res.send("Rent Nest is Running");
 });
 
 app.use("/api/v1", routes);
