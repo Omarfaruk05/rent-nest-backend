@@ -23,8 +23,9 @@ model User {
   updatedAt        DateTime          @updatedAt
   houses           House[]
   reviewAndRatings ReviewAndRating[]
-  bookedHouses     bookedHouse[]
+  bookedHouses     BookedHouse[]
   Feedback         Feedback[]
+  Blog             Blog[]
 
   @@map("users")
 }
@@ -101,7 +102,7 @@ model House {
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   ReviewAndRating ReviewAndRating[]
-  bookedHouse     bookedHouse?
+  bookedHouse     BookedHouse?
 
   @@map("houses")
 }
@@ -121,7 +122,7 @@ model ReviewAndRating {
   @@map("review_and_ratings")
 }
 
-model bookedHouse {
+model BookedHouse {
   id String @id @default(uuid())
 
   userId String
@@ -149,6 +150,19 @@ model Feedback {
   updatedAt DateTime @updatedAt
 
   @@map("feedbacks")
+}
+
+model Blog {
+  id     String @id @default(uuid())
+  title  String
+  blog   String
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("blogs")
 }
 
 enum AvailabelStatus {
