@@ -11,16 +11,20 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(uuid())
-  name          String
-  email         String   @unique
-  role          String
-  contactNumber String
-  password      String
-  address       String?
-  profileImage  String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id               String            @id @default(uuid())
+  name             String
+  email            String            @unique
+  role             String
+  contactNumber    String
+  password         String
+  address          String?
+  profileImage     String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  houses           House[]
+  reviewAndRatings ReviewAndRating[]
+  bookedHouses     bookedHouse[]
+  Feedback         Feedback[]
 
   @@map("users")
 }
@@ -50,10 +54,8 @@ model HouseOwner {
   profileImage  String?
   address       String?
 
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  myHouses    House[]
-  bookedHouse bookedHouse[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("house_owners")
 }
@@ -71,11 +73,6 @@ model HouseRenter {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  rentedHouses     House[]
-  reviewAndRatings ReviewAndRating[]
-  bookedHouse      bookedHouse[]
-  Feedback         Feedback[]
-
   @@map("house_renters")
 }
 
@@ -90,36 +87,33 @@ model House {
   numberOfBalcony Int
   parking         Int
 
-  YearBuilt        Int
+  yearBuilt        Int
   gas              GasStatus
   propertyType     PropertyTypeStatus
   interior         InteriorStatus
   status           AvailabelStatus    @default(AVAILABLE)
   availabilityDate DateTime
   rentPerMonth     String
-  contactNumber    String
   description      String
   ownerId          String
-  owner            HouseOwner         @relation(fields: [ownerId], references: [id])
-  bookedById       String
-  bookedBy         HouseRenter        @relation(fields: [bookedById], references: [id])
+  owner            User               @relation(fields: [ownerId], references: [id])
 
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   ReviewAndRating ReviewAndRating[]
-  bookedHouse     bookedHouse[]
+  bookedHouse     bookedHouse?
 
   @@map("houses")
 }
 
 model ReviewAndRating {
-  id            String      @id @default(uuid())
-  review        String
-  rating        Float
-  houseRenterId String
-  houseRenter   HouseRenter @relation(fields: [houseRenterId], references: [id])
-  houseId       String
-  house         House       @relation(fields: [houseId], references: [id])
+  id      String @id @default(uuid())
+  review  String
+  rating  Float
+  userId  String
+  user    User   @relation(fields: [userId], references: [id])
+  houseId String
+  house   House  @relation(fields: [houseId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -130,14 +124,11 @@ model ReviewAndRating {
 model bookedHouse {
   id String @id @default(uuid())
 
-  houseRenterId String
-  houseRenter   HouseRenter @relation(fields: [houseRenterId], references: [id])
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 
-  houseOwnerId String
-  houseOwner   HouseOwner @relation(fields: [houseOwnerId], references: [id])
-
-  bookedHouseId String
-  bookedHouse   House  @relation(fields: [bookedHouseId], references: [id])
+  houseId String @unique
+  house   House  @relation(fields: [houseId], references: [id])
 
   bookingStatus Status @default(PENDING)
 
@@ -150,9 +141,9 @@ model bookedHouse {
 model Feedback {
   id String @id @default(uuid())
 
-  feedback      String
-  houseRenterId String
-  user          HouseRenter @relation(fields: [houseRenterId], references: [id])
+  feedback String
+  userId   String
+  user     User   @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

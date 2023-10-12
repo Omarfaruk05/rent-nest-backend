@@ -16,6 +16,7 @@ const createUser = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+
 const createAdmin = catchAsync(async (req: Request, res: Response) => {
   const result = await UserService.createAdmin(req.body);
 
