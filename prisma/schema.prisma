@@ -11,10 +11,58 @@ datasource db {
 }
 
 model User {
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  role          String
+  contactNumber String
+  password      String
+  address       String?
+  profileImage  String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Admin {
   id            String     @id @default(uuid())
   name          String
   email         String     @unique
-  role          RoleStatus @default(HOUSE_RENTER)
+  role          RoleStatus
+  contactNumber String
+  password      String
+  profileImage  String?
+  address       String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@map("admins")
+}
+
+model HouseOwner {
+  id            String     @id @default(uuid())
+  name          String
+  email         String     @unique
+  role          RoleStatus
+  contactNumber String
+  password      String
+  profileImage  String?
+  address       String?
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  myHouses    House[]
+  bookedHouse bookedHouse[]
+
+  @@map("house_owners")
+}
+
+model HouseRenter {
+  id            String     @id @default(uuid())
+  name          String
+  email         String     @unique
+  role          RoleStatus
   contactNumber String
   password      String
   profileImage  String?
@@ -23,11 +71,123 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("users")
+  rentedHouses     House[]
+  reviewAndRatings ReviewAndRating[]
+  bookedHouse      bookedHouse[]
+  Feedback         Feedback[]
+
+  @@map("house_renters")
+}
+
+model House {
+  id              String @id @default(uuid())
+  propertyId      String
+  name            String
+  address         String
+  city            String
+  bedrooms        Int
+  roomSize        String
+  numberOfBalcony Int
+  parking         Int
+
+  YearBuilt        Int
+  gas              GasStatus
+  propertyType     PropertyTypeStatus
+  interior         InteriorStatus
+  status           AvailabelStatus    @default(AVAILABLE)
+  availabilityDate DateTime
+  rentPerMonth     String
+  contactNumber    String
+  description      String
+  ownerId          String
+  owner            HouseOwner         @relation(fields: [ownerId], references: [id])
+  bookedById       String
+  bookedBy         HouseRenter        @relation(fields: [bookedById], references: [id])
+
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  ReviewAndRating ReviewAndRating[]
+  bookedHouse     bookedHouse[]
+
+  @@map("houses")
+}
+
+model ReviewAndRating {
+  id            String      @id @default(uuid())
+  review        String
+  rating        Float
+  houseRenterId String
+  houseRenter   HouseRenter @relation(fields: [houseRenterId], references: [id])
+  houseId       String
+  house         House       @relation(fields: [houseId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("review_and_ratings")
+}
+
+model bookedHouse {
+  id String @id @default(uuid())
+
+  houseRenterId String
+  houseRenter   HouseRenter @relation(fields: [houseRenterId], references: [id])
+
+  houseOwnerId String
+  houseOwner   HouseOwner @relation(fields: [houseOwnerId], references: [id])
+
+  bookedHouseId String
+  bookedHouse   House  @relation(fields: [bookedHouseId], references: [id])
+
+  bookingStatus Status @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("booked_houses")
+}
+
+model Feedback {
+  id String @id @default(uuid())
+
+  feedback      String
+  houseRenterId String
+  user          HouseRenter @relation(fields: [houseRenterId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("feedbacks")
+}
+
+enum AvailabelStatus {
+  AVAILABLE
+  BOOKED
+}
+
+enum InteriorStatus {
+  Furnished
+  Un_Furnished
+}
+
+enum PropertyTypeStatus {
+  Furnished
+  Residential
+  Luxury
+}
+
+enum GasStatus {
+  LPG
+  Govt
 }
 
 enum RoleStatus {
   ADMIN
   HOUSE_OWNER
   HOUSE_RENTER
+}
+
+enum Status {
+  PENDING
+  BOOKED
 }

@@ -5,7 +5,6 @@ const createToken = (
   secret: Secret,
   expireTime: string
 ): string => {
-  console.log(payload, secret, expireTime);
   return jwt.sign(payload, secret, {
     expiresIn: expireTime,
   });
