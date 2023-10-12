@@ -3,6 +3,8 @@ import catchAsync from "../../../shared/catchAsync";
 import { HouseService } from "./house.service";
 import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status";
+import pick from "../../../shared/pick";
+import { HouseFilterableFields } from "./house.constant";
 
 const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
   const user = req.user as any;
@@ -16,6 +18,21 @@ const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+//get all houses
+const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
+  const filters = pick(req.query, HouseFilterableFields);
+  const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
+
+  const result = await HouseService.getAllFromDB(filters, options);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Houses fetched successfully",
+    meta: result.meta,
+    data: result.data,
+  });
+});
+
 //get single house
 const getByIdFromDB = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -25,7 +42,7 @@ const getByIdFromDB = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "House Fetched Successfully!",
+    message: "House fetched successfully!",
     data: result,
   });
 });
@@ -59,6 +76,7 @@ const deleteByIdFromDB = catchAsync(async (req: Request, res: Response) => {
 
 export const HouseController = {
   insertIntoDB,
+  getAllFromDB,
   getByIdFromDB,
   updateOneInDB,
   deleteByIdFromDB,

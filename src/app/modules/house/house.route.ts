@@ -14,6 +14,7 @@ router.post(
   HouseController.insertIntoDB
 );
 
+router.get("/", HouseController.getAllFromDB);
 router.get("/:id", HouseController.getByIdFromDB);
 
 router.patch(

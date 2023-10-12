@@ -1,8 +1,12 @@
-import { House } from "@prisma/client";
+import { House, Prisma } from "@prisma/client";
 import prisma from "../../../shared/prisma";
 import ApiError from "../../../errors/ApiError";
 import httpStatus from "http-status";
+import { IPaginationOptions } from "../../../interfaces/pagination";
+import { paginationHelpers } from "../../../helpers/paginationHelpers";
+import { HouseSearchableFields } from "./house.constant";
 
+//create house
 const insertIntoDB = async (user: any, homeData: House): Promise<House> => {
   const { id, email, role } = user;
 
@@ -26,7 +30,69 @@ const insertIntoDB = async (user: any, homeData: House): Promise<House> => {
   return result;
 };
 
-// creat single House service
+//get all houses
+const getAllFromDB = async (
+  filters: any,
+  paginationOptions: IPaginationOptions
+) => {
+  const { limit, page, skip } =
+    paginationHelpers.calculatePagination(paginationOptions);
+  const { searchTerm, ...filterData } = filters;
+
+  const andConditions = [];
+
+  if (searchTerm) {
+    andConditions.push({
+      OR: HouseSearchableFields.map((field) => ({
+        [field]: {
+          contains: searchTerm,
+          mode: "insensitive",
+        },
+      })),
+    });
+  }
+
+  if (Object.keys(filterData).length > 0) {
+    andConditions.push({
+      AND: Object.keys(filterData).map((key) => {
+        return {
+          [key]: {
+            equals: (filterData as any)[key],
+          },
+        };
+      }),
+    });
+  }
+
+  const whereConditions: Prisma.HouseWhereInput =
+    andConditions.length > 0 ? { AND: andConditions } : {};
+
+  const result = await prisma.house.findMany({
+    where: whereConditions,
+    skip,
+    take: limit,
+    orderBy:
+      paginationOptions.sortBy && paginationOptions.sortOrder
+        ? { [paginationOptions.sortBy]: paginationOptions.sortOrder }
+        : {
+            createdAt: "desc",
+          },
+  });
+  const total = await prisma.house.count({
+    where: whereConditions,
+  });
+
+  return {
+    meta: {
+      total,
+      page,
+      limit,
+    },
+    data: result,
+  };
+};
+
+// get single House service
 const getByIdFromDB = async (id: string): Promise<House | null> => {
   const result = await prisma.house.findUnique({
     where: {
@@ -119,6 +185,7 @@ const deleteByIdFromDB = async (
 
 export const HouseService = {
   insertIntoDB,
+  getAllFromDB,
   getByIdFromDB,
   updateOneInDB,
   deleteByIdFromDB,
