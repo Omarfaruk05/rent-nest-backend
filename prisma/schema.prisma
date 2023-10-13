@@ -175,11 +175,13 @@ model Feedback {
 }
 
 model Blog {
-  id     String @id @default(uuid())
-  title  String
-  blog   String
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
+  id String @id @default(uuid())
+
+  title     String
+  blog      String
+  blogImage String?
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
