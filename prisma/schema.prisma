@@ -26,6 +26,8 @@ model User {
   bookedHouses     BookedHouse[]
   Feedback         Feedback[]
   Blog             Blog[]
+  addToCart        AddToCart[]
+  faqs             Faq[]
 
   @@map("users")
 }
@@ -78,7 +80,7 @@ model HouseRenter {
 }
 
 model House {
-  id              String @id @default(uuid())
+  id              String   @id @default(uuid())
   propertyId      String
   name            String
   address         String
@@ -87,22 +89,25 @@ model House {
   roomSize        String
   numberOfBalcony Int
   parking         Int
+  yearBuilt       Int
+  houseImage      String[] @default([])
 
-  yearBuilt        Int
-  gas              GasStatus
-  propertyType     PropertyTypeStatus
-  interior         InteriorStatus
-  status           AvailabelStatus    @default(AVAILABLE)
+  gas          GasStatus
+  propertyType PropertyTypeStatus
+  interior     InteriorStatus
+  status       AvailabelStatus    @default(AVAILABLE)
+
+  rentPerMonth String
+  description  String
+  ownerId      String
+  owner        User   @relation(fields: [ownerId], references: [id])
+
   availabilityDate DateTime
-  rentPerMonth     String
-  description      String
-  ownerId          String
-  owner            User               @relation(fields: [ownerId], references: [id])
-
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-  ReviewAndRating ReviewAndRating[]
-  bookedHouse     BookedHouse?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  ReviewAndRating  ReviewAndRating[]
+  bookedHouse      BookedHouse?
+  addToCart        AddToCart[]
 
   @@map("houses")
 }
@@ -131,6 +136,8 @@ model BookedHouse {
   houseId String @unique
   house   House  @relation(fields: [houseId], references: [id])
 
+  //have to add booking time
+
   bookingStatus Status @default(PENDING)
 
   createdAt DateTime @default(now())
@@ -139,6 +146,21 @@ model BookedHouse {
   @@map("booked_houses")
 }
 
+//add to cart
+
+model AddToCart {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  houseId String
+  house   House  @relation(fields: [houseId], references: [id])
+
+  @@map("add_to_cart")
+}
+
+//feedback
 model Feedback {
   id String @id @default(uuid())
 
@@ -163,6 +185,19 @@ model Blog {
   updatedAt DateTime @updatedAt
 
   @@map("blogs")
+}
+
+model Faq {
+  id       String @id @default(uuid())
+  question String
+  answer   String
+  userId   String
+  user     User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("faqs")
 }
 
 enum AvailabelStatus {
@@ -194,5 +229,6 @@ enum RoleStatus {
 
 enum Status {
   PENDING
-  BOOKED
+  ACCEPTED
+  REJECTED
 }

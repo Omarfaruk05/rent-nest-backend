@@ -5,6 +5,7 @@ import httpStatus from "http-status";
 import { IPaginationOptions } from "../../../interfaces/pagination";
 import { paginationHelpers } from "../../../helpers/paginationHelpers";
 import { HouseSearchableFields } from "./house.constant";
+import { IGenericResponse } from "../../../interfaces/common";
 
 //create house
 const insertIntoDB = async (user: any, homeData: House): Promise<House> => {
@@ -34,7 +35,7 @@ const insertIntoDB = async (user: any, homeData: House): Promise<House> => {
 const getAllFromDB = async (
   filters: any,
   paginationOptions: IPaginationOptions
-) => {
+): Promise<IGenericResponse<House[]>> => {
   const { limit, page, skip } =
     paginationHelpers.calculatePagination(paginationOptions);
   const { searchTerm, ...filterData } = filters;

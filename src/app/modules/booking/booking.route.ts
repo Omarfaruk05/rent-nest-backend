@@ -46,6 +46,7 @@ router.patch(
   validateRequest(BookingValidation.updateBookingZodSchema),
   BookingController.updateOneInDB
 );
+
 router.delete(
   "/:id",
   auth(
