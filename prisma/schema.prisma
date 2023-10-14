@@ -170,8 +170,10 @@ model AddToCart {
   userId String
   user   User   @relation(fields: [userId], references: [id])
 
-  houseId String
-  house   House  @relation(fields: [houseId], references: [id])
+  houseId   String
+  house     House    @relation(fields: [houseId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("add_to_cart")
 }

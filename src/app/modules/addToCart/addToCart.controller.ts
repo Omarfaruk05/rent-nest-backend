@@ -1,33 +1,33 @@
 import { Request, Response } from "express";
 import catchAsync from "../../../shared/catchAsync";
-import { ReviewService } from "./review.service";
 import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status";
 import pick from "../../../shared/pick";
-import { reviewFilterableFields } from "./review.constant";
+import { AddToCartService } from "./addToCart.service";
+import { addToCartFilterableFilds } from "./addToCart.constant";
 
 const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
   const user = req.user as any;
-  const result = await ReviewService.insertIntoDB(req.body, user);
+  const result = await AddToCartService.insertIntoDB(req.body, user);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Review Created Successfully!",
+    message: "Cart Created Successfully!",
     data: result,
   });
 });
 
 const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
-  const filter = pick(req.query, reviewFilterableFields);
+  const filter = pick(req.query, addToCartFilterableFilds);
   const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
 
-  const result = await ReviewService.getAllFromDB(filter, options);
+  const result = await AddToCartService.getAllFromDB(filter, options);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Reviews fetched Successfully!",
+    message: "Cart fetched Successfully!",
     meta: result.meta,
     data: result.data,
   });
@@ -36,12 +36,12 @@ const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
 const updateOneInDB = catchAsync(async (req: Request, res: Response) => {
   const user = req.user as any;
   const { id } = req.params;
-  const result = await ReviewService.updateOneInDB(id, req.body, user);
+  const result = await AddToCartService.updateOneInDB(id, req.body, user);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Review Updated Successfully!",
+    message: "Cart Updated Successfully!",
     data: result,
   });
 });
@@ -50,17 +50,17 @@ const deleteByIdFromDB = catchAsync(async (req: Request, res: Response) => {
   const user = req.user as any;
   const { id } = req.params;
 
-  const result = await ReviewService.deleteByIdFromDB(id, user);
+  const result = await AddToCartService.deleteByIdFromDB(id, user);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Review Deleted Successfully!",
+    message: "Cart Deleted Successfully!",
     data: result,
   });
 });
 
-export const ReviewController = {
+export const AddToCartController = {
   insertIntoDB,
   getAllFromDB,
   updateOneInDB,

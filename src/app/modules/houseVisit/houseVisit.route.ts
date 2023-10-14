@@ -23,7 +23,7 @@ router.get(
   ),
   HouseVisitController.getAllFromDB
 );
-router.get("/", HouseVisitController.getAvalilableSlods);
+router.get("/slots", HouseVisitController.getAvalilableSlods);
 router.delete("/:id", HouseVisitController.cenceleHouseVisit);
 
 export const HouseVisitRoutes = router;

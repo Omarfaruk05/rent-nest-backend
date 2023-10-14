@@ -1,26 +1,17 @@
-import { Prisma, ReviewAndRating } from "@prisma/client";
+import { AddToCart, Prisma } from "@prisma/client";
 import prisma from "../../../shared/prisma";
 import { IPaginationOptions } from "../../../interfaces/pagination";
-import { paginationHelpers } from "../../../helpers/paginationHelpers";
 import { IGenericResponse } from "../../../interfaces/common";
+import { paginationHelpers } from "../../../helpers/paginationHelpers";
 import ApiError from "../../../errors/ApiError";
 import httpStatus from "http-status";
-import { ENUM_USER_ROLE } from "../../../enums/user";
 
-const insertIntoDB = async (
-  data: ReviewAndRating,
-  user: any
-): Promise<ReviewAndRating> => {
-  const { id } = user;
+const insertIntoDB = async (data: AddToCart, user: any): Promise<AddToCart> => {
+  const { id: userId } = user;
+  data["userId"] = userId;
 
-  data["userId"] = id;
-
-  const result = await prisma.reviewAndRating.create({
+  const result = await prisma.addToCart.create({
     data,
-    include: {
-      user: true,
-      house: true,
-    },
   });
 
   return result;
@@ -29,7 +20,7 @@ const insertIntoDB = async (
 const getAllFromDB = async (
   filterData: any,
   paginationOptions: IPaginationOptions
-): Promise<IGenericResponse<ReviewAndRating[]>> => {
+): Promise<IGenericResponse<AddToCart[]>> => {
   const { limit, page, skip } =
     paginationHelpers.calculatePagination(paginationOptions);
 
@@ -47,10 +38,10 @@ const getAllFromDB = async (
     });
   }
 
-  const whereConditions: Prisma.ReviewAndRatingWhereInput =
+  const whereConditions: Prisma.AddToCartWhereInput =
     andConditions.length > 0 ? { AND: andConditions } : {};
 
-  const result = await prisma.reviewAndRating.findMany({
+  const result = await prisma.addToCart.findMany({
     include: {
       user: true,
       house: true,
@@ -66,9 +57,7 @@ const getAllFromDB = async (
           },
   });
 
-  const total = await prisma.reviewAndRating.count({
-    where: whereConditions,
-  });
+  const total = await prisma.addToCart.count({ where: whereConditions });
 
   return {
     meta: {
@@ -82,12 +71,12 @@ const getAllFromDB = async (
 
 const updateOneInDB = async (
   id: string,
-  data: Partial<ReviewAndRating>,
+  data: Partial<AddToCart>,
   user: any
-): Promise<ReviewAndRating> => {
+): Promise<AddToCart> => {
   const { id: userId } = user;
 
-  const review = await prisma.reviewAndRating.findFirst({
+  const review = await prisma.addToCart.findFirst({
     where: {
       id,
     },
@@ -104,7 +93,7 @@ const updateOneInDB = async (
     );
   }
 
-  const result = await prisma.reviewAndRating.update({
+  const result = await prisma.addToCart.update({
     where: {
       id,
     },
@@ -118,38 +107,28 @@ const updateOneInDB = async (
   return result;
 };
 
-const deleteByIdFromDB = async (
-  id: string,
-  user: any
-): Promise<ReviewAndRating> => {
-  const { id: userId, role } = user;
+const deleteByIdFromDB = async (id: string, user: any): Promise<AddToCart> => {
+  const { id: userId } = user;
 
-  const review = await prisma.reviewAndRating.findFirst({
+  const review = await prisma.addToCart.findFirst({
     where: {
       id,
     },
   });
 
-  if (
-    role === ENUM_USER_ROLE.ADMIN ||
-    role === ENUM_USER_ROLE.SUPER_ADMIN ||
-    userId === review?.userId
-  ) {
-    const result = await prisma.reviewAndRating.delete({
+  if (userId === review?.userId) {
+    const result = await prisma.addToCart.delete({
       where: {
         id,
       },
     });
     return result;
   } else {
-    throw new ApiError(
-      httpStatus.BAD_REQUEST,
-      "Only reviewer, admin and super admin can delete"
-    );
+    throw new ApiError(httpStatus.BAD_REQUEST, "You cann't delete this item.");
   }
 };
 
-export const ReviewService = {
+export const AddToCartService = {
   insertIntoDB,
   getAllFromDB,
   updateOneInDB,
