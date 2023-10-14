@@ -130,11 +130,13 @@ const updateOneInDB = async (
       user: true,
     },
   });
-  if (userId !== faq?.userId && role !== ENUM_USER_ROLE.SUPER_ADMIN) {
-    throw new ApiError(
-      httpStatus.BAD_REQUEST,
-      "Only Super Admin and faq crator can update faq."
-    );
+  if (userId !== faq?.userId) {
+    if (role !== ENUM_USER_ROLE.SUPER_ADMIN) {
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        "Only Super Admin and faq crator can update faq."
+      );
+    }
   }
 
   const result = await prisma.faq.update({
@@ -163,11 +165,13 @@ const deleteByIdFromDB = async (
     },
   });
 
-  if (deletedFaq?.userId !== userId || role !== ENUM_USER_ROLE.SUPER_ADMIN) {
-    throw new ApiError(
-      httpStatus.BAD_REQUEST,
-      "Only Super Admin and faq crator can delete faq."
-    );
+  if (deletedFaq?.userId !== userId) {
+    if (role !== ENUM_USER_ROLE.SUPER_ADMIN) {
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        "Only Super Admin and faq crator can delete faq."
+      );
+    }
   }
 
   const result = await prisma.faq.delete({

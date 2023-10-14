@@ -28,6 +28,7 @@ model User {
   Blog             Blog[]
   addToCart        AddToCart[]
   faqs             Faq[]
+  HouseVisit       HouseVisit[]
 
   @@map("users")
 }
@@ -108,6 +109,7 @@ model House {
   ReviewAndRating  ReviewAndRating[]
   bookedHouse      BookedHouse?
   addToCart        AddToCart[]
+  visits           HouseVisit[]
 
   @@map("houses")
 }
@@ -146,8 +148,22 @@ model BookedHouse {
   @@map("booked_houses")
 }
 
-//add to cart
+//bookingSchedule 
+model HouseVisit {
+  id        String    @id @default(uuid())
+  visitDate String
+  visitSlot VisitSlot
+  visitorId String
+  visitor   User      @relation(fields: [visitorId], references: [id])
+  house     House     @relation(fields: [houseId], references: [id])
+  houseId   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
+  @@map("house_visits")
+}
+
+//add to cart
 model AddToCart {
   id String @id @default(uuid())
 
@@ -233,4 +249,10 @@ enum Status {
   PENDING
   ACCEPTED
   REJECTED
+}
+
+enum VisitSlot {
+  MORNING
+  NOON
+  EVENING
 }
