@@ -242,9 +242,9 @@ enum GasStatus {
 }
 
 enum RoleStatus {
-  ADMIN
-  HOUSE_OWNER
-  HOUSE_RENTER
+  admin
+  house_owner
+  house_renter
 }
 
 enum Status {

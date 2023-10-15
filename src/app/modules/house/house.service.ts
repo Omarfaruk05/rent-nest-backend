@@ -6,6 +6,7 @@ import { IPaginationOptions } from "../../../interfaces/pagination";
 import { paginationHelpers } from "../../../helpers/paginationHelpers";
 import { HouseSearchableFields } from "./house.constant";
 import { IGenericResponse } from "../../../interfaces/common";
+import { ENUM_USER_ROLE } from "../../../enums/user";
 
 //create house
 const insertIntoDB = async (user: any, homeData: House): Promise<House> => {
@@ -151,7 +152,7 @@ const deleteByIdFromDB = async (
 ): Promise<House | null> => {
   const { id: userId, role }: any = user;
 
-  if (role === "ADMIN" || role === "SUPER_ADMIN") {
+  if (role === ENUM_USER_ROLE.ADMIN || role === ENUM_USER_ROLE.SUPER_ADMIN) {
     const result = await prisma.house.delete({
       where: {
         id,

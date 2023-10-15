@@ -4,6 +4,7 @@ import ApiError from "../../../errors/ApiError";
 import httpStatus from "http-status";
 import { IPaginationOptions } from "../../../interfaces/pagination";
 import { paginationHelpers } from "../../../helpers/paginationHelpers";
+import { ENUM_USER_ROLE } from "../../../enums/user";
 
 const insertIntoDB = async (
   data: BookedHouse,
@@ -27,7 +28,7 @@ const insertIntoDB = async (
     throw new ApiError(httpStatus.NOT_FOUND, "User does not exist.");
   }
 
-  if (isUserExist.role != "HOUSE_RENTER") {
+  if (isUserExist.role != ENUM_USER_ROLE.HOUSE_RENTER) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
       "Only house renter can book house."
@@ -67,7 +68,7 @@ const getAllFromDB = async (
     });
   }
 
-  if (role === "HOUSE_RENTER") {
+  if (role === ENUM_USER_ROLE.HOUSE_RENTER) {
     andConditions.push({
       AND: [
         {
@@ -78,7 +79,7 @@ const getAllFromDB = async (
       ],
     });
   }
-  if (role === "HOUSE_OWNER") {
+  if (role === ENUM_USER_ROLE.HOUSE_OWNER) {
     andConditions.push({
       AND: [
         {
@@ -146,7 +147,10 @@ const getByIdFromDB = async (
     throw new ApiError(httpStatus.NOT_FOUND, "User does not exist.");
   }
 
-  if (isUserExist.role === "ADMIN" || isUserExist.role === "SUPER_ADMIN") {
+  if (
+    isUserExist.role === ENUM_USER_ROLE.ADMIN ||
+    isUserExist.role === ENUM_USER_ROLE.SUPER_ADMIN
+  ) {
     return await prisma.bookedHouse.findUnique({
       include: {
         user: true,
@@ -160,7 +164,7 @@ const getByIdFromDB = async (
         id,
       },
     });
-  } else if (isUserExist.role === "HOUSE_OWNER") {
+  } else if (isUserExist.role === ENUM_USER_ROLE.HOUSE_OWNER) {
     return await prisma.bookedHouse.findUnique({
       include: {
         user: true,
@@ -177,7 +181,7 @@ const getByIdFromDB = async (
         },
       },
     });
-  } else if (isUserExist.role === "HOUSE_RENTER") {
+  } else if (isUserExist.role === ENUM_USER_ROLE.HOUSE_RENTER) {
     return await prisma.bookedHouse.findUnique({
       include: {
         user: true,
@@ -214,7 +218,10 @@ const updateOneInDB = async (
     throw new ApiError(httpStatus.NOT_FOUND, "User does not exist.");
   }
 
-  if (isUserExist.role === "ADMIN" || isUserExist.role === "SUPER_ADMIN") {
+  if (
+    isUserExist.role === ENUM_USER_ROLE.ADMIN ||
+    isUserExist.role === ENUM_USER_ROLE.SUPER_ADMIN
+  ) {
     return await prisma.bookedHouse.update({
       include: {
         user: true,
@@ -229,7 +236,7 @@ const updateOneInDB = async (
       },
       data,
     });
-  } else if (isUserExist.role === "HOUSE_OWNER") {
+  } else if (isUserExist.role === ENUM_USER_ROLE.HOUSE_OWNER) {
     return await prisma.bookedHouse.update({
       include: {
         user: true,
@@ -247,7 +254,7 @@ const updateOneInDB = async (
       },
       data,
     });
-  } else if (isUserExist.role === "HOUSE_RENTER") {
+  } else if (isUserExist.role === ENUM_USER_ROLE.HOUSE_RENTER) {
     return await prisma.bookedHouse.update({
       include: {
         user: true,
@@ -284,7 +291,10 @@ const deleteByIdFromDB = async (
     throw new ApiError(httpStatus.NOT_FOUND, "User does not exist.");
   }
 
-  if (isUserExist.role === "ADMIN" || isUserExist.role === "SUPER_ADMIN") {
+  if (
+    isUserExist.role === ENUM_USER_ROLE.ADMIN ||
+    isUserExist.role === ENUM_USER_ROLE.SUPER_ADMIN
+  ) {
     return await prisma.bookedHouse.delete({
       include: {
         user: true,

@@ -8,6 +8,7 @@ import { IGenericResponse } from "../../../interfaces/common";
 import { IPaginationOptions } from "../../../interfaces/pagination";
 import { UserSearchableFields } from "./user.constant";
 import { paginationHelpers } from "../../../helpers/paginationHelpers";
+import { ENUM_USER_ROLE } from "../../../enums/user";
 
 const createUser = async (
   data: HouseOwner | HouseRenter
@@ -17,13 +18,13 @@ const createUser = async (
     Number(config.bycrypt_salt_rounds)
   );
 
-  if (data.role === "HOUSE_OWNER") {
+  if (data.role === ENUM_USER_ROLE.HOUSE_OWNER) {
     await prisma.houseOwner.create({ data });
     return await prisma.user.create({
       data,
     });
   }
-  if (data.role === "HOUSE_RENTER") {
+  if (data.role === ENUM_USER_ROLE.HOUSE_RENTER) {
     await prisma.houseRenter.create({
       data,
     });
@@ -37,7 +38,7 @@ const createAdmin = async (data: Admin): Promise<User | undefined> => {
     Number(config.bycrypt_salt_rounds)
   );
 
-  if (data.role !== "ADMIN") {
+  if (data.role !== ENUM_USER_ROLE.ADMIN) {
     throw new ApiError(httpStatus.BAD_REQUEST, "User role must be admin");
   }
   await await prisma.admin.create({
@@ -112,11 +113,45 @@ const getByIdFromDB = async (id: string): Promise<User | null> => {
   return result;
 };
 
+const updatMyProfile = async (
+  id: string,
+  data: Partial<User>
+): Promise<User> => {
+  const result = await prisma.user.update({
+    where: {
+      id,
+    },
+    data,
+  });
+  return result;
+};
+
+const makeAdmin = async (
+  id: string,
+  data: Partial<User>,
+  user: any
+): Promise<User> => {
+  const { role } = user;
+  if (role !== ENUM_USER_ROLE.ADMIN || role !== ENUM_USER_ROLE.SUPER_ADMIN) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      "Only admin and super admin can make admin"
+    );
+  }
+  const result = await prisma.user.update({
+    where: {
+      id,
+    },
+    data,
+  });
+  return result;
+};
+
 const deleteUserInDB = async (
   id: string,
   userRole: string
 ): Promise<User | null | undefined> => {
-  if (userRole === "SUPER_ADMIN") {
+  if (userRole === ENUM_USER_ROLE.SUPER_ADMIN) {
     await prisma.admin.delete({
       where: {
         id,
@@ -185,5 +220,7 @@ export const UserService = {
   createAdmin,
   getAllFromDB,
   getByIdFromDB,
+  updatMyProfile,
+  makeAdmin,
   deleteUserInDB,
 };

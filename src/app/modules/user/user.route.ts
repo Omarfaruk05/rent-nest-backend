@@ -24,9 +24,24 @@ router.get(
   UserController.getAllFromDB
 );
 router.get(
+  "/user",
+  auth(
+    ENUM_USER_ROLE.SUPER_ADMIN,
+    ENUM_USER_ROLE.ADMIN,
+    ENUM_USER_ROLE.HOUSE_OWNER,
+    ENUM_USER_ROLE.HOUSE_RENTER
+  ),
+  UserController.getByIdFromDB
+);
+router.patch(
+  "/update-profile",
+  auth(ENUM_USER_ROLE.HOUSE_OWNER, ENUM_USER_ROLE.HOUSE_RENTER),
+  UserController.updatMyProfile
+);
+router.patch(
   "/:id",
   auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
-  UserController.getByIdFromDB
+  UserController.makeAdmin
 );
 router.delete(
   "/:id",

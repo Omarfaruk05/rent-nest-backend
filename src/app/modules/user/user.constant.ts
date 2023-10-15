@@ -1,4 +1,4 @@
-export const Role = ["HOUSE_OWNER", "HOUSE_RENTER"];
+export const Role = ["house_owner", "house_renter"];
 
 export const UserSearchableFields = ["name", "role", "email", "contactNumber"];
 

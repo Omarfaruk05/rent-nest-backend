@@ -41,13 +41,38 @@ const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 const getByIdFromDB = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const { id } = req.user as any;
   const result = await UserService.getByIdFromDB(id);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "User fetched Successfully!",
+    data: result,
+  });
+});
+
+const updatMyProfile = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.user as any;
+  const result = await UserService.updatMyProfile(id, req.body);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "User Updated Successfully!",
+    data: result,
+  });
+});
+
+const makeAdmin = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const user = req.user as any;
+  const result = await UserService.makeAdmin(id, req.body, user);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "User Updated Successfully!",
     data: result,
   });
 });
@@ -68,5 +93,7 @@ export const UserController = {
   createAdmin,
   getAllFromDB,
   getByIdFromDB,
+  updatMyProfile,
+  makeAdmin,
   deleteUserInDB,
 };
