@@ -10,7 +10,7 @@ import { ENUM_USER_ROLE } from "../../../enums/user";
 
 //create house
 const insertIntoDB = async (user: any, homeData: House): Promise<House> => {
-  const { id, email, role } = user;
+  const { id } = user;
 
   const isHouseOwner = await prisma.user.findFirst({
     where: {
@@ -18,9 +18,21 @@ const insertIntoDB = async (user: any, homeData: House): Promise<House> => {
     },
   });
 
-  if (!isHouseOwner || isHouseOwner.role != "HOUSE_OWNER") {
+  if (!isHouseOwner || isHouseOwner.role != ENUM_USER_ROLE.HOUSE_OWNER) {
     throw new ApiError(httpStatus.NOT_FOUND, "You are not authorized owner.");
   }
+
+  function generateRandomPropertyId(length: number) {
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let result = "";
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      result += characters.charAt(randomIndex);
+    }
+    return result;
+  }
+
+  homeData.propertyId = generateRandomPropertyId(4);
 
   homeData.ownerId = id;
   homeData.availabilityDate = new Date(homeData?.availabilityDate);

@@ -90,7 +90,7 @@ model House {
   roomSize        String
   numberOfBalcony Int
   parking         Int
-  yearBuilt       Int
+  yearBuilt       String
   houseImage      String[] @default([])
 
   gas          GasStatus

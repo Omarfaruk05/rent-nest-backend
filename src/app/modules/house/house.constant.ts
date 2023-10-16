@@ -12,6 +12,7 @@ export const HouseSearchableFields = [
   "city",
   "interior",
   " status",
+  "ownerId",
 ];
 
 export const HouseFilterableFields = [
@@ -22,6 +23,7 @@ export const HouseFilterableFields = [
   "interior",
   "status",
   "city",
+  "ownerId",
   "bedrooms",
   "numberOfBalcony",
   "rentPerMonth",

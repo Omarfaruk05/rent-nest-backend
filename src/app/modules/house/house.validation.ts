@@ -22,7 +22,7 @@ const createHouseZodSchema = z.object({
 
     propertyId: z.string().optional(),
 
-    yearBuilt: z.number({ required_error: "Built Year is required." }),
+    yearBuilt: z.string({ required_error: "Built Year is required." }),
 
     gas: z.enum([...GAS] as [string, ...string[]], {
       required_error: "GAS must be LPG or Govt",
@@ -37,18 +37,12 @@ const createHouseZodSchema = z.object({
       required_error: "Interior must be Furnished or Un_Furnished",
     }),
 
-    status: z.enum([...Availabale] as [string, ...string[]], {
-      required_error: "Role must be AVAILABLE or BOOKED",
-    }),
-
     availabilityDate: z.string({
       required_error: "Availity date is required.",
     }),
     rentPerMonth: z.string({ required_error: "Rent per month is required." }),
 
     description: z.string({ required_error: "Description is required." }),
-
-    ownerId: z.string({ required_error: "Owner id is required." }),
   }),
 });
 
