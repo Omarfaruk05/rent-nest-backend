@@ -32,15 +32,25 @@ const house_constant_1 = require("./house.constant");
 const user_1 = require("../../../enums/user");
 //create house
 const insertIntoDB = (user, homeData) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id, email, role } = user;
+    const { id } = user;
     const isHouseOwner = yield prisma_1.default.user.findFirst({
         where: {
             id,
         },
     });
-    if (!isHouseOwner || isHouseOwner.role != "HOUSE_OWNER") {
+    if (!isHouseOwner || isHouseOwner.role != user_1.ENUM_USER_ROLE.HOUSE_OWNER) {
         throw new ApiError_1.default(http_status_1.default.NOT_FOUND, "You are not authorized owner.");
     }
+    function generateRandomPropertyId(length) {
+        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        let result = "";
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            result += characters.charAt(randomIndex);
+        }
+        return result;
+    }
+    homeData.propertyId = generateRandomPropertyId(4);
     homeData.ownerId = id;
     homeData.availabilityDate = new Date(homeData === null || homeData === void 0 ? void 0 : homeData.availabilityDate);
     const result = yield prisma_1.default.house.create({

@@ -8,12 +8,11 @@ import { ENUM_USER_ROLE } from "../../../enums/user";
 const insertIntoDB = async (
   data: HouseVisit,
   user: any
-): Promise<HouseVisit> => {
-  const { id } = user;
+): Promise<HouseVisit | undefined> => {
+  const { id, role } = user;
 
   data["visitorId"] = id;
   data.visitDate = data.visitDate.toString().split("T")[0];
-  console.log(data.visitDate);
 
   const isExistVisitSlot = await prisma.houseVisit.findMany({
     where: {
@@ -30,20 +29,47 @@ const insertIntoDB = async (
     );
   }
 
-  const result = await prisma.houseVisit.create({
-    data,
-  });
-  return result;
+  if (role === ENUM_USER_ROLE.HOUSE_OWNER) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      "Only house Renter can create visit House."
+    );
+  }
+  if (role === ENUM_USER_ROLE.HOUSE_RENTER) {
+    const result = await prisma.houseVisit.create({
+      data,
+    });
+    return result;
+  }
 };
 
-const getAllFromDB = async (user: any): Promise<HouseVisit[]> => {
+const getAllFromDB = async (user: any): Promise<HouseVisit[] | undefined> => {
   const { id: userId, role } = user;
 
-  if (
-    role === ENUM_USER_ROLE.HOUSE_OWNER ||
-    role === ENUM_USER_ROLE.HOUSE_RENTER
-  ) {
+  if (role === ENUM_USER_ROLE.ADMIN || role === ENUM_USER_ROLE.SUPER_ADMIN) {
+    const result = await prisma.houseVisit.findMany({});
+
+    return result;
+  } else if (role === ENUM_USER_ROLE.HOUSE_OWNER) {
     const result = await prisma.houseVisit.findMany({
+      include: {
+        house: true,
+        visitor: true,
+      },
+      where: {
+        house: {
+          ownerId: userId,
+        },
+      },
+    });
+
+    return result;
+  } else if (role === ENUM_USER_ROLE.HOUSE_RENTER) {
+    const result = await prisma.houseVisit.findMany({
+      include: {
+        house: true,
+        visitor: true,
+      },
       where: {
         visitorId: userId,
       },
@@ -51,10 +77,6 @@ const getAllFromDB = async (user: any): Promise<HouseVisit[]> => {
 
     return result;
   }
-
-  const result = await prisma.houseVisit.findMany({});
-
-  return result;
 };
 
 const getAvailableSlods = async (houseId: any, date: any) => {
@@ -79,14 +101,68 @@ const getAvailableSlods = async (houseId: any, date: any) => {
   }
 };
 
-export const cenceleHouseVisit = async (id: string) => {
-  const result = await prisma.houseVisit.delete({
-    where: {
-      id,
-    },
-  });
+export const cenceleHouseVisit = async (id: string, user: any) => {
+  const { id: userId, role } = user as any;
 
-  return result;
+  if (role === ENUM_USER_ROLE.HOUSE_RENTER) {
+    const isHouseVisitExist = await prisma.houseVisit.findMany({
+      where: {
+        visitorId: userId,
+      },
+    });
+    if (!isHouseVisitExist.length) {
+      throw new ApiError(httpStatus.NOT_FOUND, "You have not House visit ");
+    }
+
+    if (isHouseVisitExist.some((house) => house.visitorId === userId)) {
+      const result = await prisma.houseVisit.delete({
+        where: {
+          id,
+        },
+      });
+
+      return result;
+    }
+  }
+
+  if (role === ENUM_USER_ROLE.HOUSE_OWNER) {
+    const isHouseVisitExist = await prisma.houseVisit.findMany({
+      where: {
+        house: {
+          ownerId: userId,
+        },
+      },
+      include: {
+        house: {
+          include: {
+            owner: true,
+          },
+        },
+      },
+    });
+    if (!isHouseVisitExist.length) {
+      throw new ApiError(httpStatus.NOT_FOUND, "You have not House visit ");
+    }
+
+    if (isHouseVisitExist.some((house) => house.house.ownerId === userId)) {
+      const result = await prisma.houseVisit.delete({
+        where: {
+          id,
+        },
+      });
+
+      return result;
+    }
+  }
+  if (role === ENUM_USER_ROLE.ADMIN || role === ENUM_USER_ROLE.SUPER_ADMIN) {
+    const result = await prisma.houseVisit.delete({
+      where: {
+        id,
+      },
+    });
+
+    return result;
+  }
 };
 
 export const HouseVisitService = {

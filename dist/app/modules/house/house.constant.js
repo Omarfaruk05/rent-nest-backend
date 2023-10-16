@@ -12,6 +12,7 @@ exports.HouseSearchableFields = [
     "city",
     "interior",
     " status",
+    "ownerId",
 ];
 exports.HouseFilterableFields = [
     "searchTerm",
@@ -21,6 +22,7 @@ exports.HouseFilterableFields = [
     "interior",
     "status",
     "city",
+    "ownerId",
     "bedrooms",
     "numberOfBalcony",
     "rentPerMonth",

@@ -42,8 +42,9 @@ const getAvalilableSlods = catchAsync(async (req: Request, res: Response) => {
 });
 const cenceleHouseVisit = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
+  const user = req.user as any;
 
-  const result = await HouseVisitService.cenceleHouseVisit(id);
+  const result = await HouseVisitService.cenceleHouseVisit(id, user);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

@@ -138,8 +138,6 @@ model BookedHouse {
   houseId String @unique
   house   House  @relation(fields: [houseId], references: [id])
 
-  //have to add booking time
-
   bookingStatus Status @default(PENDING)
 
   createdAt DateTime @default(now())

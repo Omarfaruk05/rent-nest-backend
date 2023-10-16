@@ -24,6 +24,15 @@ router.get(
   HouseVisitController.getAllFromDB
 );
 router.get("/slots", HouseVisitController.getAvalilableSlods);
-router.delete("/:id", HouseVisitController.cenceleHouseVisit);
+router.delete(
+  "/:id",
+  auth(
+    ENUM_USER_ROLE.HOUSE_RENTER,
+    ENUM_USER_ROLE.HOUSE_OWNER,
+    ENUM_USER_ROLE.ADMIN,
+    ENUM_USER_ROLE.SUPER_ADMIN
+  ),
+  HouseVisitController.cenceleHouseVisit
+);
 
 export const HouseVisitRoutes = router;

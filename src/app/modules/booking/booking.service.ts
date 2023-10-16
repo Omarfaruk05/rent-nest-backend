@@ -10,7 +10,9 @@ const insertIntoDB = async (
   data: BookedHouse,
   user: any
 ): Promise<BookedHouse> => {
-  const { id, email, role } = user;
+  const { id } = user;
+
+  data.userId = id;
 
   if (id !== data.userId) {
     throw new ApiError(httpStatus.BAD_REQUEST, "It is not your userId");
@@ -19,8 +21,6 @@ const insertIntoDB = async (
   const isUserExist = await prisma.user.findFirst({
     where: {
       id,
-      email,
-      role,
     },
   });
 
@@ -34,9 +34,21 @@ const insertIntoDB = async (
       "Only house renter can book house."
     );
   }
+  const isHouseExist = await prisma.house.findFirst({
+    where: {
+      id: data?.houseId,
+    },
+  });
+  if (!isHouseExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, "House does not exist.");
+  }
 
   const result = await prisma.bookedHouse.create({
     data,
+    include: {
+      house: true,
+      user: true,
+    },
   });
 
   return result;
@@ -214,14 +226,39 @@ const updateOneInDB = async (
     },
   });
 
+  const isBookingExist = await prisma.bookedHouse.findFirst({
+    where: {
+      id,
+    },
+    include: {
+      user: true,
+      house: {
+        include: {
+          owner: true,
+        },
+      },
+    },
+  });
+
   if (!isUserExist) {
     throw new ApiError(httpStatus.NOT_FOUND, "User does not exist.");
+  }
+  if (!isBookingExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, "There is no booking in this id.");
   }
 
   if (
     isUserExist.role === ENUM_USER_ROLE.ADMIN ||
     isUserExist.role === ENUM_USER_ROLE.SUPER_ADMIN
   ) {
+    await prisma.house.update({
+      where: {
+        id: isBookingExist.houseId,
+      },
+      data: {
+        status: "BOOKED",
+      },
+    });
     return await prisma.bookedHouse.update({
       include: {
         user: true,
@@ -236,7 +273,16 @@ const updateOneInDB = async (
       },
       data,
     });
-  } else if (isUserExist.role === ENUM_USER_ROLE.HOUSE_OWNER) {
+  }
+  if (isUserExist.id === isBookingExist.house.ownerId) {
+    await prisma.house.update({
+      where: {
+        id: isBookingExist.houseId,
+      },
+      data: {
+        status: "BOOKED",
+      },
+    });
     return await prisma.bookedHouse.update({
       include: {
         user: true,
@@ -251,22 +297,6 @@ const updateOneInDB = async (
         house: {
           ownerId: userId,
         },
-      },
-      data,
-    });
-  } else if (isUserExist.role === ENUM_USER_ROLE.HOUSE_RENTER) {
-    return await prisma.bookedHouse.update({
-      include: {
-        user: true,
-        house: {
-          include: {
-            owner: true,
-          },
-        },
-      },
-      where: {
-        id,
-        userId,
       },
       data,
     });
@@ -287,57 +317,60 @@ const deleteByIdFromDB = async (
     },
   });
 
+  const isBookingExist = await prisma.bookedHouse.findFirst({
+    where: {
+      id,
+    },
+    include: {
+      user: true,
+      house: {
+        include: {
+          owner: true,
+        },
+      },
+    },
+  });
+
   if (!isUserExist) {
     throw new ApiError(httpStatus.NOT_FOUND, "User does not exist.");
+  }
+  if (!isBookingExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, "There is no booking in this id.");
   }
 
   if (
     isUserExist.role === ENUM_USER_ROLE.ADMIN ||
     isUserExist.role === ENUM_USER_ROLE.SUPER_ADMIN
   ) {
-    return await prisma.bookedHouse.delete({
-      include: {
-        user: true,
-        house: {
-          include: {
-            owner: true,
-          },
-        },
+    await prisma.house.update({
+      where: {
+        id: isBookingExist.houseId,
       },
+      data: {
+        status: "AVAILABLE",
+      },
+    });
+    return await prisma.bookedHouse.delete({
       where: {
         id,
       },
     });
-  } else if (isUserExist.role === "HOUSE_OWNER") {
-    return await prisma.bookedHouse.delete({
-      include: {
-        user: true,
-        house: {
-          include: {
-            owner: true,
-          },
-        },
-      },
+  }
+  if (
+    isUserExist.id === isBookingExist.house.ownerId ||
+    isUserExist.id === isBookingExist.userId
+  ) {
+    await prisma.house.update({
       where: {
-        id,
-        house: {
-          ownerId: userId,
-        },
+        id: isBookingExist.houseId,
+      },
+      data: {
+        status: "AVAILABLE",
       },
     });
-  } else if (isUserExist.role === "HOUSE_RENTER") {
     return await prisma.bookedHouse.delete({
-      include: {
-        user: true,
-        house: {
-          include: {
-            owner: true,
-          },
-        },
-      },
       where: {
         id,
-        userId,
       },
     });
   }

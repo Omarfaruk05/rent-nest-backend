@@ -15,7 +15,7 @@ const createHouseZodSchema = zod_1.z.object({
         }),
         parking: zod_1.z.number({ required_error: "Parking is required." }),
         propertyId: zod_1.z.string().optional(),
-        yearBuilt: zod_1.z.number({ required_error: "Built Year is required." }),
+        yearBuilt: zod_1.z.string({ required_error: "Built Year is required." }),
         gas: zod_1.z.enum([...house_constant_1.GAS], {
             required_error: "GAS must be LPG or Govt",
         }),
@@ -25,15 +25,11 @@ const createHouseZodSchema = zod_1.z.object({
         interior: zod_1.z.enum([...house_constant_1.Interior], {
             required_error: "Interior must be Furnished or Un_Furnished",
         }),
-        status: zod_1.z.enum([...house_constant_1.Availabale], {
-            required_error: "Role must be AVAILABLE or BOOKED",
-        }),
         availabilityDate: zod_1.z.string({
             required_error: "Availity date is required.",
         }),
         rentPerMonth: zod_1.z.string({ required_error: "Rent per month is required." }),
         description: zod_1.z.string({ required_error: "Description is required." }),
-        ownerId: zod_1.z.string({ required_error: "Owner id is required." }),
     }),
 });
 const updateHouseZodSchema = zod_1.z.object({

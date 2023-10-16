@@ -109,7 +109,7 @@ const getByIdFromDB = async (id: string): Promise<User | null> => {
       id,
     },
   });
-  console.log(result);
+
   return result;
 };
 
