@@ -107,7 +107,6 @@ const getByIdFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
             id,
         },
     });
-    console.log(result);
     return result;
 });
 const updatMyProfile = (id, data) => __awaiter(void 0, void 0, void 0, function* () {

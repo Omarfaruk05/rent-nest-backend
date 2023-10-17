@@ -18,6 +18,19 @@ const createUser = async (
     Number(config.bycrypt_salt_rounds)
   );
 
+  const isUserExist = await prisma.user.findFirst({
+    where: {
+      email: data?.email,
+    },
+  });
+
+  if (isUserExist) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      "This is email is already used!"
+    );
+  }
+
   if (data.role === ENUM_USER_ROLE.HOUSE_OWNER) {
     await prisma.houseOwner.create({ data });
     return await prisma.user.create({
@@ -131,13 +144,19 @@ const makeAdmin = async (
   data: Partial<User>,
   user: any
 ): Promise<User> => {
-  const { role } = user;
-  if (role !== ENUM_USER_ROLE.ADMIN || role !== ENUM_USER_ROLE.SUPER_ADMIN) {
+  const { id: useId, role } = user;
+  console.log(role);
+
+  if (
+    role === ENUM_USER_ROLE.HOUSE_OWNER ||
+    role === ENUM_USER_ROLE.HOUSE_RENTER
+  ) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
       "Only admin and super admin can make admin"
     );
   }
+
   const result = await prisma.user.update({
     where: {
       id,
@@ -151,24 +170,115 @@ const deleteUserInDB = async (
   id: string,
   userRole: string
 ): Promise<User | null | undefined> => {
-  if (userRole === ENUM_USER_ROLE.SUPER_ADMIN) {
-    await prisma.admin.delete({
-      where: {
-        id,
-      },
-    });
-    await prisma.houseOwner.delete({
-      where: {
-        id,
-      },
-    });
+  const isUserExist = await prisma.user.findFirst({
+    where: {
+      id,
+    },
+  });
 
-    await prisma.houseRenter.delete({
+  if (
+    (isUserExist && isUserExist.role === ENUM_USER_ROLE.HOUSE_RENTER) ||
+    isUserExist?.role === ENUM_USER_ROLE.HOUSE_OWNER ||
+    isUserExist?.role === ENUM_USER_ROLE.ADMIN
+  ) {
+    await prisma.bookedHouse.deleteMany({
       where: {
-        id,
+        user: {
+          email: isUserExist.email,
+        },
       },
     });
+  }
+  if (
+    (isUserExist && isUserExist.role === ENUM_USER_ROLE.HOUSE_RENTER) ||
+    isUserExist?.role === ENUM_USER_ROLE.HOUSE_OWNER ||
+    isUserExist?.role === ENUM_USER_ROLE.ADMIN
+  ) {
+    await prisma.reviewAndRating.deleteMany({
+      where: {
+        user: {
+          email: isUserExist.email,
+        },
+      },
+    });
+  }
+  if (
+    (isUserExist && isUserExist.role === ENUM_USER_ROLE.HOUSE_RENTER) ||
+    isUserExist?.role === ENUM_USER_ROLE.HOUSE_OWNER ||
+    isUserExist?.role === ENUM_USER_ROLE.ADMIN
+  ) {
+    await prisma.houseVisit.deleteMany({
+      where: {
+        visitor: {
+          email: isUserExist.email,
+        },
+      },
+    });
+  }
+  if (
+    (isUserExist && isUserExist.role === ENUM_USER_ROLE.HOUSE_RENTER) ||
+    isUserExist?.role === ENUM_USER_ROLE.HOUSE_OWNER ||
+    isUserExist?.role === ENUM_USER_ROLE.ADMIN
+  ) {
+    await prisma.feedback.deleteMany({
+      where: {
+        user: {
+          email: isUserExist.email,
+        },
+      },
+    });
+  }
+  if (
+    (isUserExist && isUserExist.role === ENUM_USER_ROLE.HOUSE_RENTER) ||
+    isUserExist?.role === ENUM_USER_ROLE.HOUSE_OWNER ||
+    isUserExist?.role === ENUM_USER_ROLE.ADMIN
+  ) {
+    await prisma.addToCart.deleteMany({
+      where: {
+        user: {
+          email: isUserExist.email,
+        },
+      },
+    });
+  }
 
+  if (
+    (isUserExist && isUserExist.role === ENUM_USER_ROLE.HOUSE_RENTER) ||
+    isUserExist?.role === ENUM_USER_ROLE.HOUSE_OWNER ||
+    isUserExist?.role === ENUM_USER_ROLE.ADMIN
+  ) {
+    await prisma.house.deleteMany({
+      where: {
+        ownerId: isUserExist.id,
+      },
+    });
+  }
+
+  if (
+    (isUserExist && isUserExist.role === ENUM_USER_ROLE.HOUSE_RENTER) ||
+    isUserExist?.role === ENUM_USER_ROLE.HOUSE_OWNER ||
+    isUserExist?.role === ENUM_USER_ROLE.ADMIN
+  ) {
+    await prisma.feedback.deleteMany({
+      where: {
+        userId: isUserExist.id,
+      },
+    });
+  }
+  if (
+    (isUserExist && isUserExist.role === ENUM_USER_ROLE.HOUSE_RENTER) ||
+    isUserExist?.role === ENUM_USER_ROLE.HOUSE_OWNER ||
+    isUserExist?.role === ENUM_USER_ROLE.ADMIN
+  ) {
+    await prisma.reviewAndRating.deleteMany({
+      where: {
+        userId: isUserExist.id,
+      },
+    });
+  }
+
+  //super admin and admin
+  if (isUserExist && userRole === ENUM_USER_ROLE.SUPER_ADMIN) {
     const result = await prisma.user.delete({
       where: {
         id,
@@ -178,32 +288,20 @@ const deleteUserInDB = async (
     return result;
   }
 
-  if (userRole === "ADMIN") {
+  if (userRole === ENUM_USER_ROLE.ADMIN) {
     const deletedUser = await prisma.user.findFirst({
       where: {
         id,
       },
     });
-    if (deletedUser?.role === "ADMIN") {
+    if (deletedUser?.role === ENUM_USER_ROLE.ADMIN) {
       throw new ApiError(httpStatus.BAD_REQUEST, "You cannot delete Admin");
     }
 
     if (
-      deletedUser?.role === "HOUSE_OWNER" ||
-      deletedUser?.role === "HOUSE_RENTER"
+      deletedUser?.role === ENUM_USER_ROLE.HOUSE_OWNER ||
+      deletedUser?.role === ENUM_USER_ROLE.HOUSE_RENTER
     ) {
-      await prisma.houseOwner.delete({
-        where: {
-          id,
-        },
-      });
-
-      await prisma.houseRenter.delete({
-        where: {
-          id,
-        },
-      });
-
       const result = await prisma.user.delete({
         where: {
           id,

@@ -96,9 +96,7 @@ const getAllFromDB = async (
       AND: [
         {
           house: {
-            owner: {
-              id: userId,
-            },
+            ownerId: userId,
           },
         },
       ],

@@ -8,26 +8,43 @@ import { IGenericResponse } from "../../../interfaces/common";
 import { paginationHelpers } from "../../../helpers/paginationHelpers";
 
 // creat feedback
-const insertIntoDB = async (data: Feedback, user: any): Promise<Feedback> => {
+const insertIntoDB = async (
+  data: Feedback,
+  user: any
+): Promise<Feedback | undefined> => {
   const { id, role } = user;
 
-  if (role === ENUM_USER_ROLE.ADMIN || role === ENUM_USER_ROLE.SUPER_ADMIN) {
+  const isUserExist = await prisma.user.findFirst({
+    where: {
+      id,
+    },
+  });
+
+  if (!isUserExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Youse Does not exist");
+  }
+
+  if (isUserExist && isUserExist.role === ENUM_USER_ROLE.ADMIN) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Admin Cannot Create Feedback.");
+  } else if (isUserExist && isUserExist.role === ENUM_USER_ROLE.SUPER_ADMIN) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
-      "Only house renter and house owner can feedback."
+      "Super Admin Cannot Create Feedback."
     );
   }
 
   data["userId"] = id;
 
-  const result = await prisma.feedback.create({
-    data,
-    include: {
-      user: true,
-    },
-  });
+  if (isUserExist) {
+    const result = await prisma.feedback.create({
+      data,
+      include: {
+        user: true,
+      },
+    });
 
-  return result;
+    return result;
+  }
 };
 
 // get all feedback

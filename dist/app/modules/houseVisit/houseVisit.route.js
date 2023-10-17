@@ -14,5 +14,5 @@ const router = express_1.default.Router();
 router.post("/", (0, auth_1.default)(user_1.ENUM_USER_ROLE.HOUSE_RENTER, user_1.ENUM_USER_ROLE.HOUSE_OWNER), (0, validateRequest_1.default)(houseVisit_validation_1.HouseVisitValidation.createHouseVisitodSchema), houseVisit_controller_1.HouseVisitController.insertIntoDB);
 router.get("/", (0, auth_1.default)(user_1.ENUM_USER_ROLE.HOUSE_RENTER, user_1.ENUM_USER_ROLE.HOUSE_OWNER, user_1.ENUM_USER_ROLE.ADMIN, user_1.ENUM_USER_ROLE.SUPER_ADMIN), houseVisit_controller_1.HouseVisitController.getAllFromDB);
 router.get("/slots", houseVisit_controller_1.HouseVisitController.getAvalilableSlods);
-router.delete("/:id", houseVisit_controller_1.HouseVisitController.cenceleHouseVisit);
+router.delete("/:id", (0, auth_1.default)(user_1.ENUM_USER_ROLE.HOUSE_RENTER, user_1.ENUM_USER_ROLE.HOUSE_OWNER, user_1.ENUM_USER_ROLE.ADMIN, user_1.ENUM_USER_ROLE.SUPER_ADMIN), houseVisit_controller_1.HouseVisitController.cenceleHouseVisit);
 exports.HouseVisitRoutes = router;

@@ -47,7 +47,12 @@ const getAllFromDB = async (user: any): Promise<HouseVisit[] | undefined> => {
   const { id: userId, role } = user;
 
   if (role === ENUM_USER_ROLE.ADMIN || role === ENUM_USER_ROLE.SUPER_ADMIN) {
-    const result = await prisma.houseVisit.findMany({});
+    const result = await prisma.houseVisit.findMany({
+      include: {
+        house: true,
+        visitor: true,
+      },
+    });
 
     return result;
   } else if (role === ENUM_USER_ROLE.HOUSE_OWNER) {

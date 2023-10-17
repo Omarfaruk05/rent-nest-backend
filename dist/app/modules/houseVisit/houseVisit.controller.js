@@ -49,7 +49,8 @@ const getAvalilableSlods = (0, catchAsync_1.default)((req, res) => __awaiter(voi
 }));
 const cenceleHouseVisit = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const result = yield houseVisit_serivce_1.HouseVisitService.cenceleHouseVisit(id);
+    const user = req.user;
+    const result = yield houseVisit_serivce_1.HouseVisitService.cenceleHouseVisit(id, user);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,

@@ -30,15 +30,14 @@ const http_status_1 = __importDefault(require("http-status"));
 const paginationHelpers_1 = require("../../../helpers/paginationHelpers");
 const user_1 = require("../../../enums/user");
 const insertIntoDB = (data, user) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id, email, role } = user;
+    const { id } = user;
+    data.userId = id;
     if (id !== data.userId) {
         throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "It is not your userId");
     }
     const isUserExist = yield prisma_1.default.user.findFirst({
         where: {
             id,
-            email,
-            role,
         },
     });
     if (!isUserExist) {
@@ -47,8 +46,20 @@ const insertIntoDB = (data, user) => __awaiter(void 0, void 0, void 0, function*
     if (isUserExist.role != user_1.ENUM_USER_ROLE.HOUSE_RENTER) {
         throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "Only house renter can book house.");
     }
+    const isHouseExist = yield prisma_1.default.house.findFirst({
+        where: {
+            id: data === null || data === void 0 ? void 0 : data.houseId,
+        },
+    });
+    if (!isHouseExist) {
+        throw new ApiError_1.default(http_status_1.default.NOT_FOUND, "House does not exist.");
+    }
     const result = yield prisma_1.default.bookedHouse.create({
         data,
+        include: {
+            house: true,
+            user: true,
+        },
     });
     return result;
 });
@@ -196,11 +207,35 @@ const updateOneInDB = (id, data, user) => __awaiter(void 0, void 0, void 0, func
             role,
         },
     });
+    const isBookingExist = yield prisma_1.default.bookedHouse.findFirst({
+        where: {
+            id,
+        },
+        include: {
+            user: true,
+            house: {
+                include: {
+                    owner: true,
+                },
+            },
+        },
+    });
     if (!isUserExist) {
         throw new ApiError_1.default(http_status_1.default.NOT_FOUND, "User does not exist.");
     }
+    if (!isBookingExist) {
+        throw new ApiError_1.default(http_status_1.default.NOT_FOUND, "There is no booking in this id.");
+    }
     if (isUserExist.role === user_1.ENUM_USER_ROLE.ADMIN ||
         isUserExist.role === user_1.ENUM_USER_ROLE.SUPER_ADMIN) {
+        yield prisma_1.default.house.update({
+            where: {
+                id: isBookingExist.houseId,
+            },
+            data: {
+                status: "BOOKED",
+            },
+        });
         return yield prisma_1.default.bookedHouse.update({
             include: {
                 user: true,
@@ -216,7 +251,15 @@ const updateOneInDB = (id, data, user) => __awaiter(void 0, void 0, void 0, func
             data,
         });
     }
-    else if (isUserExist.role === user_1.ENUM_USER_ROLE.HOUSE_OWNER) {
+    if (isUserExist.id === isBookingExist.house.ownerId) {
+        yield prisma_1.default.house.update({
+            where: {
+                id: isBookingExist.houseId,
+            },
+            data: {
+                status: "BOOKED",
+            },
+        });
         return yield prisma_1.default.bookedHouse.update({
             include: {
                 user: true,
@@ -231,23 +274,6 @@ const updateOneInDB = (id, data, user) => __awaiter(void 0, void 0, void 0, func
                 house: {
                     ownerId: userId,
                 },
-            },
-            data,
-        });
-    }
-    else if (isUserExist.role === user_1.ENUM_USER_ROLE.HOUSE_RENTER) {
-        return yield prisma_1.default.bookedHouse.update({
-            include: {
-                user: true,
-                house: {
-                    include: {
-                        owner: true,
-                    },
-                },
-            },
-            where: {
-                id,
-                userId,
             },
             data,
         });
@@ -262,56 +288,54 @@ const deleteByIdFromDB = (id, user) => __awaiter(void 0, void 0, void 0, functio
             role,
         },
     });
+    const isBookingExist = yield prisma_1.default.bookedHouse.findFirst({
+        where: {
+            id,
+        },
+        include: {
+            user: true,
+            house: {
+                include: {
+                    owner: true,
+                },
+            },
+        },
+    });
     if (!isUserExist) {
         throw new ApiError_1.default(http_status_1.default.NOT_FOUND, "User does not exist.");
     }
+    if (!isBookingExist) {
+        throw new ApiError_1.default(http_status_1.default.NOT_FOUND, "There is no booking in this id.");
+    }
     if (isUserExist.role === user_1.ENUM_USER_ROLE.ADMIN ||
         isUserExist.role === user_1.ENUM_USER_ROLE.SUPER_ADMIN) {
-        return yield prisma_1.default.bookedHouse.delete({
-            include: {
-                user: true,
-                house: {
-                    include: {
-                        owner: true,
-                    },
-                },
+        yield prisma_1.default.house.update({
+            where: {
+                id: isBookingExist.houseId,
             },
+            data: {
+                status: "AVAILABLE",
+            },
+        });
+        return yield prisma_1.default.bookedHouse.delete({
             where: {
                 id,
             },
         });
     }
-    else if (isUserExist.role === "HOUSE_OWNER") {
-        return yield prisma_1.default.bookedHouse.delete({
-            include: {
-                user: true,
-                house: {
-                    include: {
-                        owner: true,
-                    },
-                },
-            },
+    if (isUserExist.id === isBookingExist.house.ownerId ||
+        isUserExist.id === isBookingExist.userId) {
+        yield prisma_1.default.house.update({
             where: {
-                id,
-                house: {
-                    ownerId: userId,
-                },
+                id: isBookingExist.houseId,
+            },
+            data: {
+                status: "AVAILABLE",
             },
         });
-    }
-    else if (isUserExist.role === "HOUSE_RENTER") {
         return yield prisma_1.default.bookedHouse.delete({
-            include: {
-                user: true,
-                house: {
-                    include: {
-                        owner: true,
-                    },
-                },
-            },
             where: {
                 id,
-                userId,
             },
         });
     }

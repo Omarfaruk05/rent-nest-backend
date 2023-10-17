@@ -82,6 +82,9 @@ const getAllFromDB = async (
     andConditions.length > 0 ? { AND: andConditions } : {};
 
   const result = await prisma.house.findMany({
+    include: {
+      owner: true,
+    },
     where: whereConditions,
     skip,
     take: limit,
