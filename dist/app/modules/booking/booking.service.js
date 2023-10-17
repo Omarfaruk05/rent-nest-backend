@@ -96,9 +96,7 @@ const getAllFromDB = (filters, paginationOptions, user) => __awaiter(void 0, voi
             AND: [
                 {
                     house: {
-                        owner: {
-                            id: userId,
-                        },
+                        ownerId: userId,
                     },
                 },
             ],

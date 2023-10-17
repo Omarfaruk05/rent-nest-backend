@@ -56,7 +56,7 @@ const updateHouseZodSchema = z.object({
     numberOfBalcony: z.number().optional(),
     parking: z.number().optional(),
     propertyId: z.string().optional(),
-    yearBuilt: z.number().optional(),
+    yearBuilt: z.string().optional(),
     gas: z.enum([...GAS] as [string, ...string[]]).optional(),
     propertyType: z.enum([...PropertyType] as [string, ...string[]]).optional(),
     interior: z.enum([...Interior] as [string, ...string[]]).optional(),

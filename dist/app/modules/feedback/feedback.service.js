@@ -21,17 +21,30 @@ const paginationHelpers_1 = require("../../../helpers/paginationHelpers");
 // creat feedback
 const insertIntoDB = (data, user) => __awaiter(void 0, void 0, void 0, function* () {
     const { id, role } = user;
-    if (role === user_1.ENUM_USER_ROLE.ADMIN || role === user_1.ENUM_USER_ROLE.SUPER_ADMIN) {
-        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "Only house renter and house owner can feedback.");
-    }
-    data["userId"] = id;
-    const result = yield prisma_1.default.feedback.create({
-        data,
-        include: {
-            user: true,
+    const isUserExist = yield prisma_1.default.user.findFirst({
+        where: {
+            id,
         },
     });
-    return result;
+    if (!isUserExist) {
+        throw new ApiError_1.default(http_status_1.default.NOT_FOUND, "Youse Does not exist");
+    }
+    if (isUserExist && isUserExist.role === user_1.ENUM_USER_ROLE.ADMIN) {
+        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "Admin Cannot Create Feedback.");
+    }
+    else if (isUserExist && isUserExist.role === user_1.ENUM_USER_ROLE.SUPER_ADMIN) {
+        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "Super Admin Cannot Create Feedback.");
+    }
+    data["userId"] = id;
+    if (isUserExist) {
+        const result = yield prisma_1.default.feedback.create({
+            data,
+            include: {
+                user: true,
+            },
+        });
+        return result;
+    }
 });
 // get all feedback
 const getAllFromDB = (paginationOptions) => __awaiter(void 0, void 0, void 0, function* () {

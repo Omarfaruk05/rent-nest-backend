@@ -34,6 +34,14 @@ const paginationHelpers_1 = require("../../../helpers/paginationHelpers");
 const user_1 = require("../../../enums/user");
 const createUser = (data) => __awaiter(void 0, void 0, void 0, function* () {
     data.password = yield bcrypt_1.default.hash(data.password, Number(config_1.default.bycrypt_salt_rounds));
+    const isUserExist = yield prisma_1.default.user.findFirst({
+        where: {
+            email: data === null || data === void 0 ? void 0 : data.email,
+        },
+    });
+    if (isUserExist) {
+        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "This is email is already used!");
+    }
     if (data.role === user_1.ENUM_USER_ROLE.HOUSE_OWNER) {
         yield prisma_1.default.houseOwner.create({ data });
         return yield prisma_1.default.user.create({
@@ -119,8 +127,10 @@ const updatMyProfile = (id, data) => __awaiter(void 0, void 0, void 0, function*
     return result;
 });
 const makeAdmin = (id, data, user) => __awaiter(void 0, void 0, void 0, function* () {
-    const { role } = user;
-    if (role !== user_1.ENUM_USER_ROLE.ADMIN || role !== user_1.ENUM_USER_ROLE.SUPER_ADMIN) {
+    const { id: useId, role } = user;
+    console.log(role);
+    if (role === user_1.ENUM_USER_ROLE.HOUSE_OWNER ||
+        role === user_1.ENUM_USER_ROLE.HOUSE_RENTER) {
         throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "Only admin and super admin can make admin");
     }
     const result = yield prisma_1.default.user.update({
@@ -132,22 +142,95 @@ const makeAdmin = (id, data, user) => __awaiter(void 0, void 0, void 0, function
     return result;
 });
 const deleteUserInDB = (id, userRole) => __awaiter(void 0, void 0, void 0, function* () {
-    if (userRole === user_1.ENUM_USER_ROLE.SUPER_ADMIN) {
-        yield prisma_1.default.admin.delete({
+    const isUserExist = yield prisma_1.default.user.findFirst({
+        where: {
+            id,
+        },
+    });
+    if ((isUserExist && isUserExist.role === user_1.ENUM_USER_ROLE.HOUSE_RENTER) ||
+        (isUserExist === null || isUserExist === void 0 ? void 0 : isUserExist.role) === user_1.ENUM_USER_ROLE.HOUSE_OWNER ||
+        (isUserExist === null || isUserExist === void 0 ? void 0 : isUserExist.role) === user_1.ENUM_USER_ROLE.ADMIN) {
+        yield prisma_1.default.bookedHouse.deleteMany({
             where: {
-                id,
+                user: {
+                    email: isUserExist.email,
+                },
             },
         });
-        yield prisma_1.default.houseOwner.delete({
+    }
+    if ((isUserExist && isUserExist.role === user_1.ENUM_USER_ROLE.HOUSE_RENTER) ||
+        (isUserExist === null || isUserExist === void 0 ? void 0 : isUserExist.role) === user_1.ENUM_USER_ROLE.HOUSE_OWNER ||
+        (isUserExist === null || isUserExist === void 0 ? void 0 : isUserExist.role) === user_1.ENUM_USER_ROLE.ADMIN) {
+        yield prisma_1.default.reviewAndRating.deleteMany({
             where: {
-                id,
+                user: {
+                    email: isUserExist.email,
+                },
             },
         });
-        yield prisma_1.default.houseRenter.delete({
+    }
+    if ((isUserExist && isUserExist.role === user_1.ENUM_USER_ROLE.HOUSE_RENTER) ||
+        (isUserExist === null || isUserExist === void 0 ? void 0 : isUserExist.role) === user_1.ENUM_USER_ROLE.HOUSE_OWNER ||
+        (isUserExist === null || isUserExist === void 0 ? void 0 : isUserExist.role) === user_1.ENUM_USER_ROLE.ADMIN) {
+        yield prisma_1.default.houseVisit.deleteMany({
             where: {
-                id,
+                visitor: {
+                    email: isUserExist.email,
+                },
             },
         });
+    }
+    if ((isUserExist && isUserExist.role === user_1.ENUM_USER_ROLE.HOUSE_RENTER) ||
+        (isUserExist === null || isUserExist === void 0 ? void 0 : isUserExist.role) === user_1.ENUM_USER_ROLE.HOUSE_OWNER ||
+        (isUserExist === null || isUserExist === void 0 ? void 0 : isUserExist.role) === user_1.ENUM_USER_ROLE.ADMIN) {
+        yield prisma_1.default.feedback.deleteMany({
+            where: {
+                user: {
+                    email: isUserExist.email,
+                },
+            },
+        });
+    }
+    if ((isUserExist && isUserExist.role === user_1.ENUM_USER_ROLE.HOUSE_RENTER) ||
+        (isUserExist === null || isUserExist === void 0 ? void 0 : isUserExist.role) === user_1.ENUM_USER_ROLE.HOUSE_OWNER ||
+        (isUserExist === null || isUserExist === void 0 ? void 0 : isUserExist.role) === user_1.ENUM_USER_ROLE.ADMIN) {
+        yield prisma_1.default.addToCart.deleteMany({
+            where: {
+                user: {
+                    email: isUserExist.email,
+                },
+            },
+        });
+    }
+    if ((isUserExist && isUserExist.role === user_1.ENUM_USER_ROLE.HOUSE_RENTER) ||
+        (isUserExist === null || isUserExist === void 0 ? void 0 : isUserExist.role) === user_1.ENUM_USER_ROLE.HOUSE_OWNER ||
+        (isUserExist === null || isUserExist === void 0 ? void 0 : isUserExist.role) === user_1.ENUM_USER_ROLE.ADMIN) {
+        yield prisma_1.default.house.deleteMany({
+            where: {
+                ownerId: isUserExist.id,
+            },
+        });
+    }
+    if ((isUserExist && isUserExist.role === user_1.ENUM_USER_ROLE.HOUSE_RENTER) ||
+        (isUserExist === null || isUserExist === void 0 ? void 0 : isUserExist.role) === user_1.ENUM_USER_ROLE.HOUSE_OWNER ||
+        (isUserExist === null || isUserExist === void 0 ? void 0 : isUserExist.role) === user_1.ENUM_USER_ROLE.ADMIN) {
+        yield prisma_1.default.feedback.deleteMany({
+            where: {
+                userId: isUserExist.id,
+            },
+        });
+    }
+    if ((isUserExist && isUserExist.role === user_1.ENUM_USER_ROLE.HOUSE_RENTER) ||
+        (isUserExist === null || isUserExist === void 0 ? void 0 : isUserExist.role) === user_1.ENUM_USER_ROLE.HOUSE_OWNER ||
+        (isUserExist === null || isUserExist === void 0 ? void 0 : isUserExist.role) === user_1.ENUM_USER_ROLE.ADMIN) {
+        yield prisma_1.default.reviewAndRating.deleteMany({
+            where: {
+                userId: isUserExist.id,
+            },
+        });
+    }
+    //super admin and admin
+    if (isUserExist && userRole === user_1.ENUM_USER_ROLE.SUPER_ADMIN) {
         const result = yield prisma_1.default.user.delete({
             where: {
                 id,
@@ -155,27 +238,17 @@ const deleteUserInDB = (id, userRole) => __awaiter(void 0, void 0, void 0, funct
         });
         return result;
     }
-    if (userRole === "ADMIN") {
+    if (userRole === user_1.ENUM_USER_ROLE.ADMIN) {
         const deletedUser = yield prisma_1.default.user.findFirst({
             where: {
                 id,
             },
         });
-        if ((deletedUser === null || deletedUser === void 0 ? void 0 : deletedUser.role) === "ADMIN") {
+        if ((deletedUser === null || deletedUser === void 0 ? void 0 : deletedUser.role) === user_1.ENUM_USER_ROLE.ADMIN) {
             throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "You cannot delete Admin");
         }
-        if ((deletedUser === null || deletedUser === void 0 ? void 0 : deletedUser.role) === "HOUSE_OWNER" ||
-            (deletedUser === null || deletedUser === void 0 ? void 0 : deletedUser.role) === "HOUSE_RENTER") {
-            yield prisma_1.default.houseOwner.delete({
-                where: {
-                    id,
-                },
-            });
-            yield prisma_1.default.houseRenter.delete({
-                where: {
-                    id,
-                },
-            });
+        if ((deletedUser === null || deletedUser === void 0 ? void 0 : deletedUser.role) === user_1.ENUM_USER_ROLE.HOUSE_OWNER ||
+            (deletedUser === null || deletedUser === void 0 ? void 0 : deletedUser.role) === user_1.ENUM_USER_ROLE.HOUSE_RENTER) {
             const result = yield prisma_1.default.user.delete({
                 where: {
                     id,

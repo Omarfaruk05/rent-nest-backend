@@ -86,6 +86,9 @@ const getAllFromDB = (filters, paginationOptions) => __awaiter(void 0, void 0, v
     }
     const whereConditions = andConditions.length > 0 ? { AND: andConditions } : {};
     const result = yield prisma_1.default.house.findMany({
+        include: {
+            owner: true,
+        },
         where: whereConditions,
         skip,
         take: limit,

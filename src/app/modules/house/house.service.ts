@@ -135,11 +135,17 @@ const updateOneInDB = async (
   user: any,
   updatedData: Partial<House>
 ): Promise<House | null> => {
+  if (updatedData.availabilityDate) {
+    updatedData.availabilityDate = new Date(updatedData?.availabilityDate);
+  }
+
   const { id: userId }: any = user;
   const house = await prisma.house.findFirst({
     where: {
       id,
-      ownerId: userId,
+      owner: {
+        id: userId,
+      },
     },
   });
 

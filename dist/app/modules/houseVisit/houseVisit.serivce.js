@@ -45,7 +45,12 @@ const insertIntoDB = (data, user) => __awaiter(void 0, void 0, void 0, function*
 const getAllFromDB = (user) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: userId, role } = user;
     if (role === user_1.ENUM_USER_ROLE.ADMIN || role === user_1.ENUM_USER_ROLE.SUPER_ADMIN) {
-        const result = yield prisma_1.default.houseVisit.findMany({});
+        const result = yield prisma_1.default.houseVisit.findMany({
+            include: {
+                house: true,
+                visitor: true,
+            },
+        });
         return result;
     }
     else if (role === user_1.ENUM_USER_ROLE.HOUSE_OWNER) {
