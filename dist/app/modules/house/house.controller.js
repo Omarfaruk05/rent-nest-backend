@@ -32,6 +32,7 @@ const insertIntoDB = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, v
 //get all houses
 const getAllFromDB = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const filters = (0, pick_1.default)(req.query, house_constant_1.HouseFilterableFields);
+    console.log(filters);
     const options = (0, pick_1.default)(req.query, ["limit", "page", "sortBy", "sortOrder"]);
     const result = yield house_service_1.HouseService.getAllFromDB(filters, options);
     (0, sendResponse_1.default)(res, {

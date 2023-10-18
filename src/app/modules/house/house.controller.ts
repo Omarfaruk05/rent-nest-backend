@@ -21,6 +21,7 @@ const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
 //get all houses
 const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
   const filters = pick(req.query, HouseFilterableFields);
+  console.log(filters);
   const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
 
   const result = await HouseService.getAllFromDB(filters, options);

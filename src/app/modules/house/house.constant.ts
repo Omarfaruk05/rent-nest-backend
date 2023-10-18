@@ -7,24 +7,17 @@ export const PropertyType = ["Furnished", "Residential", "Luxury"];
 
 export const HouseSearchableFields = [
   "name",
-  "address",
-  "yearBuilt",
   "city",
-  "interior",
-  " status",
-  "ownerId",
+  "address",
+  "roomSize",
+  "propertyId",
 ];
 
 export const HouseFilterableFields = [
   "searchTerm",
-  "propertyId",
-  "address",
-  "city",
+  "propertyType",
   "interior",
+  "gas",
   "status",
-  "city",
   "ownerId",
-  "bedrooms",
-  "numberOfBalcony",
-  "rentPerMonth",
 ];

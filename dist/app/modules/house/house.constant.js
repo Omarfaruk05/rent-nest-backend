@@ -7,23 +7,16 @@ exports.Interior = ["Furnished", "Un_Furnished"];
 exports.PropertyType = ["Furnished", "Residential", "Luxury"];
 exports.HouseSearchableFields = [
     "name",
-    "address",
-    "yearBuilt",
     "city",
-    "interior",
-    " status",
-    "ownerId",
+    "address",
+    "roomSize",
+    "propertyId",
 ];
 exports.HouseFilterableFields = [
     "searchTerm",
-    "propertyId",
-    "address",
-    "city",
+    "propertyType",
     "interior",
+    "gas",
     "status",
-    "city",
     "ownerId",
-    "bedrooms",
-    "numberOfBalcony",
-    "rentPerMonth",
 ];

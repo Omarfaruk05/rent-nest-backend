@@ -75,13 +75,9 @@ const getAllFromDB = (filters, paginationOptions) => __awaiter(void 0, void 0, v
     }
     if (Object.keys(filterData).length > 0) {
         andConditions.push({
-            AND: Object.keys(filterData).map((key) => {
-                return {
-                    [key]: {
-                        equals: filterData[key],
-                    },
-                };
-            }),
+            AND: Object.keys(filterData).map((key) => ({
+                [key]: filterData[key],
+            })),
         });
     }
     const whereConditions = andConditions.length > 0 ? { AND: andConditions } : {};
@@ -127,11 +123,16 @@ const getByIdFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
 });
 // update House service
 const updateOneInDB = (id, user, updatedData) => __awaiter(void 0, void 0, void 0, function* () {
+    if (updatedData.availabilityDate) {
+        updatedData.availabilityDate = new Date(updatedData === null || updatedData === void 0 ? void 0 : updatedData.availabilityDate);
+    }
     const { id: userId } = user;
     const house = yield prisma_1.default.house.findFirst({
         where: {
             id,
-            ownerId: userId,
+            owner: {
+                id: userId,
+            },
         },
     });
     if (!house) {

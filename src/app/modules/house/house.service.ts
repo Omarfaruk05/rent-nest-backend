@@ -53,7 +53,7 @@ const getAllFromDB = async (
     paginationHelpers.calculatePagination(paginationOptions);
   const { searchTerm, ...filterData } = filters;
 
-  const andConditions = [];
+  const andConditions: Prisma.HouseWhereInput[] = [];
 
   if (searchTerm) {
     andConditions.push({
@@ -68,16 +68,11 @@ const getAllFromDB = async (
 
   if (Object.keys(filterData).length > 0) {
     andConditions.push({
-      AND: Object.keys(filterData).map((key) => {
-        return {
-          [key]: {
-            equals: (filterData as any)[key],
-          },
-        };
-      }),
+      AND: Object.keys(filterData).map((key) => ({
+        [key]: filterData[key],
+      })),
     });
   }
-
   const whereConditions: Prisma.HouseWhereInput =
     andConditions.length > 0 ? { AND: andConditions } : {};
 
