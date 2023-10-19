@@ -162,11 +162,13 @@ const deleteByIdFromDB = async (
     },
   });
 
-  if (deletedBlog?.userId !== userId || role !== ENUM_USER_ROLE.SUPER_ADMIN) {
-    throw new ApiError(
-      httpStatus.BAD_REQUEST,
-      "Only Super Admin and blog crator can delete blog."
-    );
+  if (deletedBlog?.userId !== userId) {
+    if (role !== ENUM_USER_ROLE.SUPER_ADMIN) {
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        "Only Super Admin and blog crator can delete blog."
+      );
+    }
   }
 
   const result = await prisma.blog.delete({

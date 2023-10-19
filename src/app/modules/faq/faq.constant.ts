@@ -1,1 +1,1 @@
-export const faqFilterableFields = ["user"];
+export const faqFilterableFields = ["userId"];

@@ -28,10 +28,7 @@ const insertIntoDB = async (
     throw new ApiError(httpStatus.NOT_FOUND, "User does not exist.");
   }
 
-  if (
-    (isUserExist.role != ENUM_USER_ROLE.HOUSE_RENTER,
-    isUserExist.role !== ENUM_USER_ROLE.HOUSE_OWNER)
-  ) {
+  if (isUserExist.role != ENUM_USER_ROLE.HOUSE_RENTER) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
       "Only house renter and house owner can book house."

@@ -1,1 +1,1 @@
-export const blogFilterableFields = ["user"];
+export const blogFilterableFields = ["userId"];

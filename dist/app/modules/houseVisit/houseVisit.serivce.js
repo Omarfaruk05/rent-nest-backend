@@ -32,10 +32,11 @@ const insertIntoDB = (data, user) => __awaiter(void 0, void 0, void 0, function*
     if (isExistVisitSlot.length) {
         throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "Visiting slot is not available.");
     }
-    if (role === user_1.ENUM_USER_ROLE.HOUSE_OWNER) {
-        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "Only house Renter can create visit House.");
+    if (role === user_1.ENUM_USER_ROLE.ADMIN || role === user_1.ENUM_USER_ROLE.SUPER_ADMIN) {
+        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "Only house Renter and house owner can create visit House.");
     }
-    if (role === user_1.ENUM_USER_ROLE.HOUSE_RENTER) {
+    if (role === user_1.ENUM_USER_ROLE.HOUSE_RENTER ||
+        role === user_1.ENUM_USER_ROLE.HOUSE_OWNER) {
         const result = yield prisma_1.default.houseVisit.create({
             data,
         });

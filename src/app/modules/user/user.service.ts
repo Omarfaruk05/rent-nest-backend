@@ -145,7 +145,6 @@ const makeAdmin = async (
   user: any
 ): Promise<User> => {
   const { id: useId, role } = user;
-  console.log(role);
 
   if (
     role === ENUM_USER_ROLE.HOUSE_OWNER ||
