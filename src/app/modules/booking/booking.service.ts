@@ -28,10 +28,13 @@ const insertIntoDB = async (
     throw new ApiError(httpStatus.NOT_FOUND, "User does not exist.");
   }
 
-  if (isUserExist.role != ENUM_USER_ROLE.HOUSE_RENTER) {
+  if (
+    (isUserExist.role != ENUM_USER_ROLE.HOUSE_RENTER,
+    isUserExist.role !== ENUM_USER_ROLE.HOUSE_OWNER)
+  ) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
-      "Only house renter can book house."
+      "Only house renter and house owner can book house."
     );
   }
   const isHouseExist = await prisma.house.findFirst({

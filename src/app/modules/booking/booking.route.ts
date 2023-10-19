@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.post(
   "/",
-  auth(ENUM_USER_ROLE.HOUSE_RENTER),
+  auth(ENUM_USER_ROLE.HOUSE_RENTER, ENUM_USER_ROLE.HOUSE_OWNER),
   validateRequest(BookingValidation.createBookingZodSchema),
   BookingController.insertIntoDB
 );
