@@ -43,8 +43,7 @@ const insertIntoDB = (data, user) => __awaiter(void 0, void 0, void 0, function*
     if (!isUserExist) {
         throw new ApiError_1.default(http_status_1.default.NOT_FOUND, "User does not exist.");
     }
-    if ((isUserExist.role != user_1.ENUM_USER_ROLE.HOUSE_RENTER,
-        isUserExist.role !== user_1.ENUM_USER_ROLE.HOUSE_OWNER)) {
+    if (isUserExist.role != user_1.ENUM_USER_ROLE.HOUSE_RENTER) {
         throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "Only house renter and house owner can book house.");
     }
     const isHouseExist = yield prisma_1.default.house.findFirst({

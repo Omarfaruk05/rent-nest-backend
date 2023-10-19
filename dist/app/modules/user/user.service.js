@@ -128,7 +128,6 @@ const updatMyProfile = (id, data) => __awaiter(void 0, void 0, void 0, function*
 });
 const makeAdmin = (id, data, user) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: useId, role } = user;
-    console.log(role);
     if (role === user_1.ENUM_USER_ROLE.HOUSE_OWNER ||
         role === user_1.ENUM_USER_ROLE.HOUSE_RENTER) {
         throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "Only admin and super admin can make admin");

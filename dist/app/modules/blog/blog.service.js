@@ -140,8 +140,10 @@ const deleteByIdFromDB = (id, user) => __awaiter(void 0, void 0, void 0, functio
             id,
         },
     });
-    if ((deletedBlog === null || deletedBlog === void 0 ? void 0 : deletedBlog.userId) !== userId || role !== user_1.ENUM_USER_ROLE.SUPER_ADMIN) {
-        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "Only Super Admin and blog crator can delete blog.");
+    if ((deletedBlog === null || deletedBlog === void 0 ? void 0 : deletedBlog.userId) !== userId) {
+        if (role !== user_1.ENUM_USER_ROLE.SUPER_ADMIN) {
+            throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "Only Super Admin and blog crator can delete blog.");
+        }
     }
     const result = yield prisma_1.default.blog.delete({
         where: {
