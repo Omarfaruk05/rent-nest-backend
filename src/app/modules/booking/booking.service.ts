@@ -46,6 +46,24 @@ const insertIntoDB = async (
     throw new ApiError(httpStatus.NOT_FOUND, "House does not exist.");
   }
 
+  const isBookedHouseExist = await prisma.bookedHouse.findFirst({
+    where: {
+      userId: id,
+      houseId: data.houseId,
+    },
+  });
+  if (!isBookedHouseExist) {
+    const result = await prisma.bookedHouse.create({
+      data,
+      include: {
+        house: true,
+        user: true,
+      },
+    });
+
+    return result;
+  }
+
   const result = await prisma.bookedHouse.create({
     data,
     include: {

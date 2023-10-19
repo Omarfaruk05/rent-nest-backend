@@ -43,8 +43,9 @@ const insertIntoDB = (data, user) => __awaiter(void 0, void 0, void 0, function*
     if (!isUserExist) {
         throw new ApiError_1.default(http_status_1.default.NOT_FOUND, "User does not exist.");
     }
-    if (isUserExist.role != user_1.ENUM_USER_ROLE.HOUSE_RENTER) {
-        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "Only house renter can book house.");
+    if ((isUserExist.role != user_1.ENUM_USER_ROLE.HOUSE_RENTER,
+        isUserExist.role !== user_1.ENUM_USER_ROLE.HOUSE_OWNER)) {
+        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "Only house renter and house owner can book house.");
     }
     const isHouseExist = yield prisma_1.default.house.findFirst({
         where: {
@@ -53,6 +54,22 @@ const insertIntoDB = (data, user) => __awaiter(void 0, void 0, void 0, function*
     });
     if (!isHouseExist) {
         throw new ApiError_1.default(http_status_1.default.NOT_FOUND, "House does not exist.");
+    }
+    const isBookedHouseExist = yield prisma_1.default.bookedHouse.findFirst({
+        where: {
+            userId: id,
+            houseId: data.houseId,
+        },
+    });
+    if (!isBookedHouseExist) {
+        const result = yield prisma_1.default.bookedHouse.create({
+            data,
+            include: {
+                house: true,
+                user: true,
+            },
+        });
+        return result;
     }
     const result = yield prisma_1.default.bookedHouse.create({
         data,

@@ -29,13 +29,16 @@ const insertIntoDB = async (
     );
   }
 
-  if (role === ENUM_USER_ROLE.HOUSE_OWNER) {
+  if (role === ENUM_USER_ROLE.ADMIN || role === ENUM_USER_ROLE.SUPER_ADMIN) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
-      "Only house Renter can create visit House."
+      "Only house Renter and house owner can create visit House."
     );
   }
-  if (role === ENUM_USER_ROLE.HOUSE_RENTER) {
+  if (
+    role === ENUM_USER_ROLE.HOUSE_RENTER ||
+    role === ENUM_USER_ROLE.HOUSE_OWNER
+  ) {
     const result = await prisma.houseVisit.create({
       data,
     });
