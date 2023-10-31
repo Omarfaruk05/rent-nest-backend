@@ -7,22 +7,20 @@ import { ENUM_USER_ROLE } from "../../../enums/user";
 
 const router = express.Router();
 
+//create user
 router.post(
   "/create-user",
   validateRequest(UserValidation.createUserZodSchema),
   UserController.createUser
 );
-router.post(
-  "/create-admin",
-  auth(ENUM_USER_ROLE.SUPER_ADMIN),
-  validateRequest(UserValidation.createAdminZodSchema),
-  UserController.createAdmin
-);
+
+// get all user
 router.get(
   "/",
   auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
   UserController.getAllFromDB
 );
+// get single user
 router.get(
   "/user",
   auth(
@@ -33,6 +31,8 @@ router.get(
   ),
   UserController.getByIdFromDB
 );
+
+// update user info
 router.patch(
   "/update-profile",
   auth(
@@ -43,11 +43,14 @@ router.patch(
   ),
   UserController.updatMyProfile
 );
+// make user into admin
 router.patch(
   "/:id",
   auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
   UserController.makeAdmin
 );
+
+// delete user
 router.delete(
   "/:id",
   auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),

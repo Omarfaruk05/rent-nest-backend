@@ -10,6 +10,7 @@ import { UserSearchableFields } from "./user.constant";
 import { paginationHelpers } from "../../../helpers/paginationHelpers";
 import { ENUM_USER_ROLE } from "../../../enums/user";
 
+//create user service
 const createUser = async (
   data: HouseOwner | HouseRenter
 ): Promise<User | undefined> => {
@@ -45,22 +46,7 @@ const createUser = async (
   }
 };
 
-const createAdmin = async (data: Admin): Promise<User | undefined> => {
-  data.password = await bcrypt.hash(
-    data.password,
-    Number(config.bycrypt_salt_rounds)
-  );
-
-  if (data.role !== ENUM_USER_ROLE.ADMIN) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "User role must be admin");
-  }
-  await await prisma.admin.create({
-    data,
-  });
-  const result = prisma.user.create({ data });
-  return result;
-};
-
+//get all user service
 const getAllFromDB = async (
   filters: any,
   options: IPaginationOptions
@@ -116,6 +102,7 @@ const getAllFromDB = async (
   };
 };
 
+// get single user info
 const getByIdFromDB = async (id: string): Promise<User | null> => {
   const result = await prisma.user.findFirst({
     where: {
@@ -126,6 +113,7 @@ const getByIdFromDB = async (id: string): Promise<User | null> => {
   return result;
 };
 
+// update single user info
 const updatMyProfile = async (
   id: string,
   data: Partial<User>
@@ -139,6 +127,7 @@ const updatMyProfile = async (
   return result;
 };
 
+// update user into admin
 const makeAdmin = async (
   id: string,
   data: Partial<User>,
@@ -165,6 +154,7 @@ const makeAdmin = async (
   return result;
 };
 
+// delete user
 const deleteUserInDB = async (
   id: string,
   userRole: string
@@ -314,7 +304,6 @@ const deleteUserInDB = async (
 
 export const UserService = {
   createUser,
-  createAdmin,
   getAllFromDB,
   getByIdFromDB,
   updatMyProfile,

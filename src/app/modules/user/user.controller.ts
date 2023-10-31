@@ -6,6 +6,7 @@ import httpStatus from "http-status";
 import { UserFilterableFields } from "./user.constant";
 import pick from "../../../shared/pick";
 
+//create user
 const createUser = catchAsync(async (req: Request, res: Response) => {
   const result = await UserService.createUser(req.body);
 
@@ -17,17 +18,7 @@ const createUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const createAdmin = catchAsync(async (req: Request, res: Response) => {
-  const result = await UserService.createAdmin(req.body);
-
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "Admin Created Successfully!",
-    data: result,
-  });
-});
-
+//get all user
 const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
   const filters = pick(req.query, UserFilterableFields);
   const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
@@ -40,6 +31,8 @@ const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
     data: result.data,
   });
 });
+
+// get single user
 const getByIdFromDB = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.user as any;
   const result = await UserService.getByIdFromDB(id);
@@ -52,6 +45,7 @@ const getByIdFromDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// update user info
 const updatMyProfile = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.user as any;
   const result = await UserService.updatMyProfile(id, req.body);
@@ -64,6 +58,7 @@ const updatMyProfile = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// make admin
 const makeAdmin = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const user = req.user as any;
@@ -76,6 +71,8 @@ const makeAdmin = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+
+// delete user
 const deleteUserInDB = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const result = await UserService.deleteUserInDB(id, req?.user?.role);
@@ -90,7 +87,6 @@ const deleteUserInDB = catchAsync(async (req: Request, res: Response) => {
 
 export const UserController = {
   createUser,
-  createAdmin,
   getAllFromDB,
   getByIdFromDB,
   updatMyProfile,
