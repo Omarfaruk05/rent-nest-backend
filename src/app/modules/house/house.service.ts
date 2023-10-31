@@ -8,7 +8,7 @@ import { HouseSearchableFields } from "./house.constant";
 import { IGenericResponse } from "../../../interfaces/common";
 import { ENUM_USER_ROLE } from "../../../enums/user";
 
-//create house
+//create house service
 const insertIntoDB = async (user: any, homeData: House): Promise<House> => {
   const { id } = user;
 
@@ -44,7 +44,7 @@ const insertIntoDB = async (user: any, homeData: House): Promise<House> => {
   return result;
 };
 
-//get all houses
+//get all houses service
 const getAllFromDB = async (
   filters: any,
   paginationOptions: IPaginationOptions

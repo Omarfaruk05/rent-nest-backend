@@ -6,6 +6,7 @@ import httpStatus from "http-status";
 import pick from "../../../shared/pick";
 import { HouseFilterableFields } from "./house.constant";
 
+// create house
 const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
   const user = req.user as any;
   const result = await HouseService.insertIntoDB(user, req.body);
@@ -47,6 +48,7 @@ const getByIdFromDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// update house info
 const updateOneInDB = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const user = req.user as any;
@@ -60,6 +62,8 @@ const updateOneInDB = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+
+// delete house
 const deleteByIdFromDB = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const user = req.user as any;
