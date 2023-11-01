@@ -5,6 +5,7 @@ import httpStatus from "http-status";
 import { bookingSlots } from "./houseVisit.constant";
 import { ENUM_USER_ROLE } from "../../../enums/user";
 
+// create house visit slot
 const insertIntoDB = async (
   data: HouseVisit,
   user: any
@@ -46,6 +47,7 @@ const insertIntoDB = async (
   }
 };
 
+// get all house visit slot
 const getAllFromDB = async (user: any): Promise<HouseVisit[] | undefined> => {
   const { id: userId, role } = user;
 
@@ -87,6 +89,7 @@ const getAllFromDB = async (user: any): Promise<HouseVisit[] | undefined> => {
   }
 };
 
+// get available slots
 const getAvailableSlods = async (houseId: any, date: any) => {
   date = date.split("T")[0];
 
@@ -109,6 +112,7 @@ const getAvailableSlods = async (houseId: any, date: any) => {
   }
 };
 
+// delete house visit slot
 export const cenceleHouseVisit = async (id: string, user: any) => {
   const { id: userId, role } = user as any;
 

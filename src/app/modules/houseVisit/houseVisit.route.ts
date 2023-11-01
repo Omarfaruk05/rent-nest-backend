@@ -7,12 +7,15 @@ import { HouseVisitValidation } from "./houseVisit.validation";
 
 const router = express.Router();
 
+// create house visiting slot
 router.post(
   "/",
   auth(ENUM_USER_ROLE.HOUSE_RENTER, ENUM_USER_ROLE.HOUSE_OWNER),
   validateRequest(HouseVisitValidation.createHouseVisitodSchema),
   HouseVisitController.insertIntoDB
 );
+
+// get all visiting
 router.get(
   "/",
   auth(
@@ -23,7 +26,11 @@ router.get(
   ),
   HouseVisitController.getAllFromDB
 );
+
+// get available slots for visiting
 router.get("/slots", HouseVisitController.getAvalilableSlods);
+
+// delete house visit
 router.delete(
   "/:id",
   auth(

@@ -4,6 +4,7 @@ import { HouseVisitService } from "./houseVisit.serivce";
 import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status";
 
+// create house visit slot
 const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
   const user = req.user as any;
   const result = await HouseVisitService.insertIntoDB(req.body, user);
@@ -16,6 +17,7 @@ const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// get all visiting slots
 const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
   const user = req.user as any;
   const result = await HouseVisitService.getAllFromDB(user);
@@ -28,6 +30,7 @@ const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// get available house visiting slot
 const getAvalilableSlods = catchAsync(async (req: Request, res: Response) => {
   const { date, houseId } = req.query;
 
@@ -40,6 +43,8 @@ const getAvalilableSlods = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+
+// delete house visit
 const cenceleHouseVisit = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const user = req.user as any;
