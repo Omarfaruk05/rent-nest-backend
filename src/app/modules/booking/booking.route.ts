@@ -7,6 +7,7 @@ import { BookingController } from "./booking.controller";
 
 const router = express.Router();
 
+//create booking
 router.post(
   "/",
   auth(ENUM_USER_ROLE.HOUSE_RENTER, ENUM_USER_ROLE.HOUSE_OWNER),
@@ -14,6 +15,7 @@ router.post(
   BookingController.insertIntoDB
 );
 
+// get all booking
 router.get(
   "/",
   auth(
@@ -24,6 +26,7 @@ router.get(
   ),
   BookingController.getAllFromDB
 );
+// get single booking
 router.get(
   "/:id",
   auth(
@@ -35,6 +38,7 @@ router.get(
   BookingController.getByIdFromDB
 );
 
+//update booking
 router.patch(
   "/:id",
   auth(
@@ -47,6 +51,7 @@ router.patch(
   BookingController.updateOneInDB
 );
 
+//delete booking
 router.delete(
   "/:id",
   auth(

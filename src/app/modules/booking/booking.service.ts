@@ -6,6 +6,7 @@ import { IPaginationOptions } from "../../../interfaces/pagination";
 import { paginationHelpers } from "../../../helpers/paginationHelpers";
 import { ENUM_USER_ROLE } from "../../../enums/user";
 
+//create booking service
 const insertIntoDB = async (
   data: BookedHouse,
   user: any
@@ -72,7 +73,7 @@ const insertIntoDB = async (
   return result;
 };
 
-//get all bookings
+//get all bookings service
 const getAllFromDB = async (
   filters: any,
   paginationOptions: IPaginationOptions,
@@ -157,6 +158,7 @@ const getAllFromDB = async (
   };
 };
 
+//get single booking
 const getByIdFromDB = async (
   id: string,
   user: any
@@ -227,6 +229,7 @@ const getByIdFromDB = async (
   }
 };
 
+// update booking info service
 const updateOneInDB = async (
   id: string,
   data: Partial<BookedHouse>,
@@ -319,6 +322,7 @@ const updateOneInDB = async (
   }
 };
 
+// delete booking service
 const deleteByIdFromDB = async (
   id: string,
   user: any
