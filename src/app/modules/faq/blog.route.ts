@@ -7,6 +7,7 @@ import { FaqValidation } from "./faq.validation";
 
 const router = express.Router();
 
+//creat faq
 router.post(
   "/",
   auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
@@ -14,9 +15,12 @@ router.post(
   FaqController.insertIntoDB
 );
 
+// get all faqs
 router.get("/", FaqController.getAllFromDB);
+// get single faq
 router.get("/:id", FaqController.getByIdFromDB);
 
+//update faq info
 router.patch(
   "/:id",
   auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
@@ -24,6 +28,7 @@ router.patch(
   FaqController.updateOneInDB
 );
 
+// delete faq
 router.delete(
   "/:id",
   auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),

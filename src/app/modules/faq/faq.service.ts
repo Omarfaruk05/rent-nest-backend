@@ -8,7 +8,7 @@ import { IGenericResponse } from "../../../interfaces/common";
 import { paginationHelpers } from "../../../helpers/paginationHelpers";
 import { faqFilterableFields } from "./faq.constant";
 
-// creat faq
+// creat faq service
 const insertIntoDB = async (data: Faq, user: any): Promise<Faq> => {
   const { id, role } = user;
 
@@ -18,7 +18,7 @@ const insertIntoDB = async (data: Faq, user: any): Promise<Faq> => {
   ) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
-      "Only house ADMIN and SUPER ADMIN can create faq."
+      "Only ADMIN and SUPER ADMIN can create faq."
     );
   }
 
@@ -34,7 +34,7 @@ const insertIntoDB = async (data: Faq, user: any): Promise<Faq> => {
   return result;
 };
 
-// get all faq
+// get all faq service
 const getAllFromDB = async (
   filters: any,
   paginationOptions: IPaginationOptions
@@ -99,7 +99,7 @@ const getAllFromDB = async (
   };
 };
 
-//get single faq
+//get single faq service
 const getByIdFromDB = async (id: string): Promise<Faq | null> => {
   const result = await prisma.faq.findUnique({
     where: {
@@ -113,7 +113,7 @@ const getByIdFromDB = async (id: string): Promise<Faq | null> => {
   return result;
 };
 
-//   update faq
+//   update faq service
 const updateOneInDB = async (
   id: string,
   data: Partial<Faq>,
@@ -151,7 +151,7 @@ const updateOneInDB = async (
   return result;
 };
 
-//   delete faq
+//   delete faq service
 const deleteByIdFromDB = async (
   id: string,
   user: any

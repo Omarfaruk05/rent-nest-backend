@@ -4,8 +4,9 @@ import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status";
 import pick from "../../../shared/pick";
 import { FaqService } from "./faq.service";
-import { faqFilterableFields } from "./faq.constant";
+import { faqFilterableFields, faqQureyOptions } from "./faq.constant";
 
+//create faq
 const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
   const user = req.user as any;
   const result = await FaqService.insertIntoDB(req.body, user);
@@ -18,21 +19,23 @@ const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// get all faqs
 const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
   const filters = pick(req.query, faqFilterableFields);
-  const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
+  const options = pick(req.query, faqQureyOptions);
 
   const result = await FaqService.getAllFromDB(filters, options);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Faqs fetched Successfully!",
+    message: "Faqs Fetched Successfully!",
     meta: result.meta,
     data: result.data,
   });
 });
 
+// get single faq
 const getByIdFromDB = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
 
@@ -41,11 +44,12 @@ const getByIdFromDB = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Faq fetched Successfully!",
+    message: "Faq Fetched Successfully!",
     data: result,
   });
 });
 
+// update faq
 const updateOneInDB = catchAsync(async (req: Request, res: Response) => {
   const user = req.user as any;
   const { id } = req.params;
@@ -59,6 +63,7 @@ const updateOneInDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// delete faq
 const deleteByIdFromDB = catchAsync(async (req: Request, res: Response) => {
   const user = req.user as any;
   const { id } = req.params;
