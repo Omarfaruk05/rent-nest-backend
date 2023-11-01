@@ -7,6 +7,7 @@ import { FeedbackValidation } from "./feedback.validation";
 
 const router = express.Router();
 
+// create feedback
 router.post(
   "/",
   auth(ENUM_USER_ROLE.HOUSE_RENTER, ENUM_USER_ROLE.HOUSE_OWNER),
@@ -14,9 +15,12 @@ router.post(
   FeedbackController.insertIntoDB
 );
 
+// get all feedbacks
 router.get("/", FeedbackController.getAllFromDB);
+// get single feedback
 router.get("/:id", FeedbackController.getByIdFromDB);
 
+// update feedback
 router.patch(
   "/:id",
   auth(
@@ -29,6 +33,7 @@ router.patch(
   FeedbackController.updateOneInDB
 );
 
+// delete feedback
 router.delete(
   "/:id",
   auth(

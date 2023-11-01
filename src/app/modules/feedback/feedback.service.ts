@@ -7,7 +7,7 @@ import { IPaginationOptions } from "../../../interfaces/pagination";
 import { IGenericResponse } from "../../../interfaces/common";
 import { paginationHelpers } from "../../../helpers/paginationHelpers";
 
-// creat feedback
+// creat feedback service
 const insertIntoDB = async (
   data: Feedback,
   user: any
@@ -21,11 +21,11 @@ const insertIntoDB = async (
   });
 
   if (!isUserExist) {
-    throw new ApiError(httpStatus.NOT_FOUND, "Youse Does not exist");
+    throw new ApiError(httpStatus.NOT_FOUND, "User does not exist");
   }
 
   if (isUserExist && isUserExist.role === ENUM_USER_ROLE.ADMIN) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Admin Cannot Create Feedback.");
+    throw new ApiError(httpStatus.BAD_REQUEST, "Admin Can't Create Feedback.");
   } else if (isUserExist && isUserExist.role === ENUM_USER_ROLE.SUPER_ADMIN) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
@@ -47,7 +47,7 @@ const insertIntoDB = async (
   }
 };
 
-// get all feedback
+// get all feedback service
 const getAllFromDB = async (
   paginationOptions: IPaginationOptions
 ): Promise<IGenericResponse<Feedback[]>> => {
@@ -80,6 +80,7 @@ const getAllFromDB = async (
   };
 };
 
+// get single feedback service
 const getByIdFromDB = async (id: string): Promise<Feedback | null> => {
   const result = await prisma.feedback.findUnique({
     where: {
@@ -93,7 +94,7 @@ const getByIdFromDB = async (id: string): Promise<Feedback | null> => {
   return result;
 };
 
-//   update feedback
+//   update feedback service
 const updateOneInDB = async (
   id: string,
   data: Partial<Feedback>,
@@ -113,7 +114,7 @@ const updateOneInDB = async (
   if (userId !== review?.userId) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
-      "You cann't update this comment because it is not your comment."
+      "You cann't update this feedback because it's not your feedback."
     );
   }
 
@@ -130,7 +131,7 @@ const updateOneInDB = async (
   return result;
 };
 
-//   delete feedback
+//   delete feedback service
 const deleteByIdFromDB = async (
   id: string,
   user: any

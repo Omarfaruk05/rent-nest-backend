@@ -4,7 +4,9 @@ import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status";
 import pick from "../../../shared/pick";
 import { FeedbackService } from "./feedback.service";
+import { queryOptions } from "./feedback.constant";
 
+//create feedback
 const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
   const user = req.user as any;
   const result = await FeedbackService.insertIntoDB(req.body, user);
@@ -17,8 +19,9 @@ const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// get all feedback
 const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
-  const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
+  const options = pick(req.query, queryOptions);
 
   const result = await FeedbackService.getAllFromDB(options);
 
@@ -31,6 +34,7 @@ const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+//get single feedbacks
 const getByIdFromDB = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
 
@@ -44,6 +48,7 @@ const getByIdFromDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// update feedback
 const updateOneInDB = catchAsync(async (req: Request, res: Response) => {
   const user = req.user as any;
   const { id } = req.params;
@@ -57,6 +62,7 @@ const updateOneInDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+//delete feedback
 const deleteByIdFromDB = catchAsync(async (req: Request, res: Response) => {
   const user = req.user as any;
   const { id } = req.params;
