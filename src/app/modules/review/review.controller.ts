@@ -6,6 +6,7 @@ import httpStatus from "http-status";
 import pick from "../../../shared/pick";
 import { reviewFilterableFields } from "./review.constant";
 
+// create review
 const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
   const user = req.user as any;
   const result = await ReviewService.insertIntoDB(req.body, user);
@@ -18,6 +19,7 @@ const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// get all reviews
 const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
   const filter = pick(req.query, reviewFilterableFields);
   const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
@@ -33,6 +35,7 @@ const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// update review info
 const updateOneInDB = catchAsync(async (req: Request, res: Response) => {
   const user = req.user as any;
   const { id } = req.params;
@@ -46,6 +49,7 @@ const updateOneInDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// delete review
 const deleteByIdFromDB = catchAsync(async (req: Request, res: Response) => {
   const user = req.user as any;
   const { id } = req.params;

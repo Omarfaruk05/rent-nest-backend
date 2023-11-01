@@ -7,6 +7,7 @@ import ApiError from "../../../errors/ApiError";
 import httpStatus from "http-status";
 import { ENUM_USER_ROLE } from "../../../enums/user";
 
+// create review service
 const insertIntoDB = async (
   data: ReviewAndRating,
   user: any
@@ -26,6 +27,7 @@ const insertIntoDB = async (
   return result;
 };
 
+// get all reviews
 const getAllFromDB = async (
   filterData: any,
   paginationOptions: IPaginationOptions
@@ -80,6 +82,7 @@ const getAllFromDB = async (
   };
 };
 
+// update review info service
 const updateOneInDB = async (
   id: string,
   data: Partial<ReviewAndRating>,
@@ -118,6 +121,7 @@ const updateOneInDB = async (
   return result;
 };
 
+// delete review
 const deleteByIdFromDB = async (
   id: string,
   user: any

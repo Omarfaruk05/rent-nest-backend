@@ -7,6 +7,7 @@ import { ReviewValidation } from "./review.validation";
 
 const router = express.Router();
 
+// create review
 router.post(
   "/",
   auth(ENUM_USER_ROLE.HOUSE_RENTER, ENUM_USER_ROLE.HOUSE_OWNER),
@@ -14,12 +15,10 @@ router.post(
   ReviewController.insertIntoDB
 );
 
-router.get(
-  "/",
+// get all reviews
+router.get("/", ReviewController.getAllFromDB);
 
-  ReviewController.getAllFromDB
-);
-
+// update review info
 router.patch(
   "/:id",
   auth(
@@ -32,6 +31,7 @@ router.patch(
   ReviewController.updateOneInDB
 );
 
+// delete reviews
 router.delete(
   "/:id",
   auth(
@@ -40,7 +40,6 @@ router.delete(
     ENUM_USER_ROLE.ADMIN,
     ENUM_USER_ROLE.SUPER_ADMIN
   ),
-
   ReviewController.deleteByIdFromDB
 );
 
