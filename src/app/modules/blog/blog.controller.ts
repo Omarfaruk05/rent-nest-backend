@@ -5,7 +5,9 @@ import httpStatus from "http-status";
 import pick from "../../../shared/pick";
 import { BlogService } from "./blog.service";
 import { blogFilterableFields } from "./blog.constant";
+import { paginationConstantOptions } from "../../../constants/paginationConstants";
 
+//create blog
 const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
   const user = req.user as any;
   const result = await BlogService.insertIntoDB(req.body, user);
@@ -18,9 +20,10 @@ const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+//get all blogs
 const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
+  const options = pick(req.query, paginationConstantOptions);
   const filters = pick(req.query, blogFilterableFields);
-  const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
 
   const result = await BlogService.getAllFromDB(filters, options);
 
@@ -33,6 +36,7 @@ const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+//get single blog
 const getByIdFromDB = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
 
@@ -46,6 +50,7 @@ const getByIdFromDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+//update blog
 const updateOneInDB = catchAsync(async (req: Request, res: Response) => {
   const user = req.user as any;
   const { id } = req.params;
@@ -59,6 +64,7 @@ const updateOneInDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// delete blog
 const deleteByIdFromDB = catchAsync(async (req: Request, res: Response) => {
   const user = req.user as any;
   const { id } = req.params;

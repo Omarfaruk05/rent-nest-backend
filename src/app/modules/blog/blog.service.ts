@@ -8,7 +8,7 @@ import { IGenericResponse } from "../../../interfaces/common";
 import { paginationHelpers } from "../../../helpers/paginationHelpers";
 import { blogFilterableFields } from "./blog.constant";
 
-// creat blog
+// creat blog service
 const insertIntoDB = async (data: Blog, user: any): Promise<Blog> => {
   const { id, role } = user;
 
@@ -34,7 +34,7 @@ const insertIntoDB = async (data: Blog, user: any): Promise<Blog> => {
   return result;
 };
 
-// get all blog
+// get all blog service
 const getAllFromDB = async (
   filters: any,
   paginationOptions: IPaginationOptions
@@ -99,6 +99,7 @@ const getAllFromDB = async (
   };
 };
 
+//get single blog service
 const getByIdFromDB = async (id: string): Promise<Blog | null> => {
   const result = await prisma.blog.findUnique({
     where: {
@@ -112,7 +113,7 @@ const getByIdFromDB = async (id: string): Promise<Blog | null> => {
   return result;
 };
 
-//   update blog
+//   update blog service
 const updateOneInDB = async (
   id: string,
   data: Partial<Blog>,
@@ -149,7 +150,7 @@ const updateOneInDB = async (
   return result;
 };
 
-//   delete feedback
+//   delete blog service
 const deleteByIdFromDB = async (
   id: string,
   user: any
