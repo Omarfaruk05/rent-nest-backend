@@ -9,6 +9,7 @@ import { jwtHelpers } from "../../../helpers/jwtHelpers";
 import { Secret } from "jsonwebtoken";
 import { IRefreshTokenResponse } from "./auth.interface";
 
+//login user service
 const loginUser = async (
   loginData: ILoginUser
 ): Promise<ILoginUserResponse> => {
@@ -53,6 +54,7 @@ const loginUser = async (
   };
 };
 
+//refresh token service
 const refreshToken = async (token: string): Promise<IRefreshTokenResponse> => {
   let verifiedToken = null;
 

@@ -7,6 +7,7 @@ import httpStatus from "http-status";
 import sendResponse from "../../../shared/sendResponse";
 import { IRefreshTokenResponse } from "./auth.interface";
 
+// login user
 const loginUser = catchAsync(async (req: Request, res: Response) => {
   const { ...loginData } = req.body;
   const result = await AuthService.loginUser(loginData);
@@ -28,6 +29,7 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// get refreshToken
 const refreshToken = catchAsync(async (req: Request, res: Response) => {
   const { refreshToken } = req.cookies;
 
