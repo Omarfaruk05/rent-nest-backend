@@ -17,6 +17,7 @@ const catchAsync_1 = __importDefault(require("../../../shared/catchAsync"));
 const houseVisit_serivce_1 = require("./houseVisit.serivce");
 const sendResponse_1 = __importDefault(require("../../../shared/sendResponse"));
 const http_status_1 = __importDefault(require("http-status"));
+// create house visit slot
 const insertIntoDB = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = req.user;
     const result = yield houseVisit_serivce_1.HouseVisitService.insertIntoDB(req.body, user);
@@ -27,6 +28,7 @@ const insertIntoDB = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, v
         data: result,
     });
 }));
+// get all visiting slots
 const getAllFromDB = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = req.user;
     const result = yield houseVisit_serivce_1.HouseVisitService.getAllFromDB(user);
@@ -37,6 +39,7 @@ const getAllFromDB = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, v
         data: result,
     });
 }));
+// get available house visiting slot
 const getAvalilableSlods = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { date, houseId } = req.query;
     const result = yield houseVisit_serivce_1.HouseVisitService.getAvailableSlods(houseId, date);
@@ -47,6 +50,7 @@ const getAvalilableSlods = (0, catchAsync_1.default)((req, res) => __awaiter(voi
         data: result,
     });
 }));
+// delete house visit
 const cenceleHouseVisit = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const user = req.user;

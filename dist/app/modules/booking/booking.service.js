@@ -29,6 +29,7 @@ const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const http_status_1 = __importDefault(require("http-status"));
 const paginationHelpers_1 = require("../../../helpers/paginationHelpers");
 const user_1 = require("../../../enums/user");
+//create booking service
 const insertIntoDB = (data, user) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = user;
     data.userId = id;
@@ -79,7 +80,7 @@ const insertIntoDB = (data, user) => __awaiter(void 0, void 0, void 0, function*
     });
     return result;
 });
-//get all bookings
+//get all bookings service
 const getAllFromDB = (filters, paginationOptions, user) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: userId, email, role } = user;
     const { limit, page, skip } = paginationHelpers_1.paginationHelpers.calculatePagination(paginationOptions);
@@ -149,6 +150,7 @@ const getAllFromDB = (filters, paginationOptions, user) => __awaiter(void 0, voi
         data: result,
     };
 });
+//get single booking
 const getByIdFromDB = (id, user) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: userId, email, role } = user;
     const isUserExist = yield prisma_1.default.user.findFirst({
@@ -212,6 +214,7 @@ const getByIdFromDB = (id, user) => __awaiter(void 0, void 0, void 0, function* 
         });
     }
 });
+// update booking info service
 const updateOneInDB = (id, data, user) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: userId, role, email } = user;
     const isUserExist = yield prisma_1.default.user.findFirst({
@@ -293,6 +296,7 @@ const updateOneInDB = (id, data, user) => __awaiter(void 0, void 0, void 0, func
         });
     }
 });
+// delete booking service
 const deleteByIdFromDB = (id, user) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: userId, role, email } = user;
     const isUserExist = yield prisma_1.default.user.findFirst({

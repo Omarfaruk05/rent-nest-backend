@@ -18,6 +18,7 @@ const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const http_status_1 = __importDefault(require("http-status"));
 const houseVisit_constant_1 = require("./houseVisit.constant");
 const user_1 = require("../../../enums/user");
+// create house visit slot
 const insertIntoDB = (data, user) => __awaiter(void 0, void 0, void 0, function* () {
     const { id, role } = user;
     data["visitorId"] = id;
@@ -43,6 +44,7 @@ const insertIntoDB = (data, user) => __awaiter(void 0, void 0, void 0, function*
         return result;
     }
 });
+// get all house visit slot
 const getAllFromDB = (user) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: userId, role } = user;
     if (role === user_1.ENUM_USER_ROLE.ADMIN || role === user_1.ENUM_USER_ROLE.SUPER_ADMIN) {
@@ -81,6 +83,7 @@ const getAllFromDB = (user) => __awaiter(void 0, void 0, void 0, function* () {
         return result;
     }
 });
+// get available slots
 const getAvailableSlods = (houseId, date) => __awaiter(void 0, void 0, void 0, function* () {
     date = date.split("T")[0];
     const bookedSlots = yield prisma_1.default.houseVisit.findMany({
@@ -97,6 +100,7 @@ const getAvailableSlods = (houseId, date) => __awaiter(void 0, void 0, void 0, f
         return availableSlot;
     }
 });
+// delete house visit slot
 const cenceleHouseVisit = (id, user) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: userId, role } = user;
     if (role === user_1.ENUM_USER_ROLE.HOUSE_RENTER) {

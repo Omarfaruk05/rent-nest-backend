@@ -18,7 +18,7 @@ const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const http_status_1 = __importDefault(require("http-status"));
 const prisma_1 = __importDefault(require("../../../shared/prisma"));
 const paginationHelpers_1 = require("../../../helpers/paginationHelpers");
-// creat feedback
+// creat feedback service
 const insertIntoDB = (data, user) => __awaiter(void 0, void 0, void 0, function* () {
     const { id, role } = user;
     const isUserExist = yield prisma_1.default.user.findFirst({
@@ -27,10 +27,10 @@ const insertIntoDB = (data, user) => __awaiter(void 0, void 0, void 0, function*
         },
     });
     if (!isUserExist) {
-        throw new ApiError_1.default(http_status_1.default.NOT_FOUND, "Youse Does not exist");
+        throw new ApiError_1.default(http_status_1.default.NOT_FOUND, "User does not exist");
     }
     if (isUserExist && isUserExist.role === user_1.ENUM_USER_ROLE.ADMIN) {
-        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "Admin Cannot Create Feedback.");
+        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "Admin Can't Create Feedback.");
     }
     else if (isUserExist && isUserExist.role === user_1.ENUM_USER_ROLE.SUPER_ADMIN) {
         throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "Super Admin Cannot Create Feedback.");
@@ -46,7 +46,7 @@ const insertIntoDB = (data, user) => __awaiter(void 0, void 0, void 0, function*
         return result;
     }
 });
-// get all feedback
+// get all feedback service
 const getAllFromDB = (paginationOptions) => __awaiter(void 0, void 0, void 0, function* () {
     const { limit, page, skip } = paginationHelpers_1.paginationHelpers.calculatePagination(paginationOptions);
     const result = yield prisma_1.default.feedback.findMany({
@@ -71,6 +71,7 @@ const getAllFromDB = (paginationOptions) => __awaiter(void 0, void 0, void 0, fu
         data: result,
     };
 });
+// get single feedback service
 const getByIdFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield prisma_1.default.feedback.findUnique({
         where: {
@@ -82,7 +83,7 @@ const getByIdFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
     });
     return result;
 });
-//   update feedback
+//   update feedback service
 const updateOneInDB = (id, data, user) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: userId } = user;
     const review = yield prisma_1.default.feedback.findFirst({
@@ -94,7 +95,7 @@ const updateOneInDB = (id, data, user) => __awaiter(void 0, void 0, void 0, func
         },
     });
     if (userId !== (review === null || review === void 0 ? void 0 : review.userId)) {
-        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "You cann't update this comment because it is not your comment.");
+        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "You cann't update this feedback because it's not your feedback.");
     }
     const result = yield prisma_1.default.feedback.update({
         where: {
@@ -107,7 +108,7 @@ const updateOneInDB = (id, data, user) => __awaiter(void 0, void 0, void 0, func
     });
     return result;
 });
-//   delete feedback
+//   delete feedback service
 const deleteByIdFromDB = (id, user) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: userId, role } = user;
     const deletedFeedback = yield prisma_1.default.feedback.findFirst({

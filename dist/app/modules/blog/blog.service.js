@@ -30,7 +30,7 @@ const http_status_1 = __importDefault(require("http-status"));
 const prisma_1 = __importDefault(require("../../../shared/prisma"));
 const paginationHelpers_1 = require("../../../helpers/paginationHelpers");
 const blog_constant_1 = require("./blog.constant");
-// creat blog
+// creat blog service
 const insertIntoDB = (data, user) => __awaiter(void 0, void 0, void 0, function* () {
     const { id, role } = user;
     if (role === user_1.ENUM_USER_ROLE.HOUSE_OWNER ||
@@ -46,7 +46,7 @@ const insertIntoDB = (data, user) => __awaiter(void 0, void 0, void 0, function*
     });
     return result;
 });
-// get all blog
+// get all blog service
 const getAllFromDB = (filters, paginationOptions) => __awaiter(void 0, void 0, void 0, function* () {
     const { limit, page, skip } = paginationHelpers_1.paginationHelpers.calculatePagination(paginationOptions);
     const { searchTerm } = filters, filterData = __rest(filters, ["searchTerm"]);
@@ -96,6 +96,7 @@ const getAllFromDB = (filters, paginationOptions) => __awaiter(void 0, void 0, v
         data: result,
     };
 });
+//get single blog service
 const getByIdFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield prisma_1.default.blog.findUnique({
         where: {
@@ -107,7 +108,7 @@ const getByIdFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
     });
     return result;
 });
-//   update blog
+//   update blog service
 const updateOneInDB = (id, data, user) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: userId, role } = user;
     const review = yield prisma_1.default.blog.findFirst({
@@ -132,7 +133,7 @@ const updateOneInDB = (id, data, user) => __awaiter(void 0, void 0, void 0, func
     });
     return result;
 });
-//   delete feedback
+//   delete blog service
 const deleteByIdFromDB = (id, user) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: userId, role } = user;
     const deletedBlog = yield prisma_1.default.blog.findFirst({

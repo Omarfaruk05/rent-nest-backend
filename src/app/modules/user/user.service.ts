@@ -31,19 +31,15 @@ const createUser = async (
       "This is email is already used!"
     );
   }
+  // if (data?.role === ENUM_USER_ROLE.HOUSE_OWNER) {
+  //   await prisma.houseOwner.create({ data });
+  // }
+  // if (data?.role === ENUM_USER_ROLE.HOUSE_RENTER) {
+  //   await prisma.houseRenter.create({ data });
+  // }
 
-  if (data.role === ENUM_USER_ROLE.HOUSE_OWNER) {
-    await prisma.houseOwner.create({ data });
-    return await prisma.user.create({
-      data,
-    });
-  }
-  if (data.role === ENUM_USER_ROLE.HOUSE_RENTER) {
-    await prisma.houseRenter.create({
-      data,
-    });
-    return await prisma.user.create({ data });
-  }
+  const user = await prisma.user.create({ data });
+  return user;
 };
 
 //get all user service

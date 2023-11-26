@@ -11,9 +11,14 @@ const auth_1 = __importDefault(require("../../middlewares/auth"));
 const user_1 = require("../../../enums/user");
 const house_validation_1 = require("./house.validation");
 const router = express_1.default.Router();
+// create house
 router.post("/", (0, auth_1.default)(user_1.ENUM_USER_ROLE.HOUSE_OWNER), (0, validateRequest_1.default)(house_validation_1.HouseValidation.createHouseZodSchema), house_controller_1.HouseController.insertIntoDB);
+// get all houses
 router.get("/", house_controller_1.HouseController.getAllFromDB);
+// get single house
 router.get("/:id", house_controller_1.HouseController.getByIdFromDB);
+// update house info
 router.patch("/:id", (0, auth_1.default)(user_1.ENUM_USER_ROLE.HOUSE_OWNER), (0, validateRequest_1.default)(house_validation_1.HouseValidation.updateHouseZodSchema), house_controller_1.HouseController.updateOneInDB);
+// delete house
 router.delete("/:id", (0, auth_1.default)(user_1.ENUM_USER_ROLE.HOUSE_OWNER, user_1.ENUM_USER_ROLE.ADMIN, user_1.ENUM_USER_ROLE.ADMIN), house_controller_1.HouseController.deleteByIdFromDB);
 exports.HouseRoutes = router;

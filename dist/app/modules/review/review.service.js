@@ -18,6 +18,7 @@ const paginationHelpers_1 = require("../../../helpers/paginationHelpers");
 const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const http_status_1 = __importDefault(require("http-status"));
 const user_1 = require("../../../enums/user");
+// create review service
 const insertIntoDB = (data, user) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = user;
     data["userId"] = id;
@@ -30,6 +31,7 @@ const insertIntoDB = (data, user) => __awaiter(void 0, void 0, void 0, function*
     });
     return result;
 });
+// get all reviews
 const getAllFromDB = (filterData, paginationOptions) => __awaiter(void 0, void 0, void 0, function* () {
     const { limit, page, skip } = paginationHelpers_1.paginationHelpers.calculatePagination(paginationOptions);
     const andConditions = [];
@@ -71,6 +73,7 @@ const getAllFromDB = (filterData, paginationOptions) => __awaiter(void 0, void 0
         data: result,
     };
 });
+// update review info service
 const updateOneInDB = (id, data, user) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: userId } = user;
     const review = yield prisma_1.default.reviewAndRating.findFirst({
@@ -97,6 +100,7 @@ const updateOneInDB = (id, data, user) => __awaiter(void 0, void 0, void 0, func
     });
     return result;
 });
+// delete review
 const deleteByIdFromDB = (id, user) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: userId, role } = user;
     const review = yield prisma_1.default.reviewAndRating.findFirst({

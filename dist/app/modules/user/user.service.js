@@ -32,6 +32,7 @@ const http_status_1 = __importDefault(require("http-status"));
 const user_constant_1 = require("./user.constant");
 const paginationHelpers_1 = require("../../../helpers/paginationHelpers");
 const user_1 = require("../../../enums/user");
+//create user service
 const createUser = (data) => __awaiter(void 0, void 0, void 0, function* () {
     data.password = yield bcrypt_1.default.hash(data.password, Number(config_1.default.bycrypt_salt_rounds));
     const isUserExist = yield prisma_1.default.user.findFirst({
@@ -42,30 +43,16 @@ const createUser = (data) => __awaiter(void 0, void 0, void 0, function* () {
     if (isUserExist) {
         throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "This is email is already used!");
     }
-    if (data.role === user_1.ENUM_USER_ROLE.HOUSE_OWNER) {
-        yield prisma_1.default.houseOwner.create({ data });
-        return yield prisma_1.default.user.create({
-            data,
-        });
-    }
-    if (data.role === user_1.ENUM_USER_ROLE.HOUSE_RENTER) {
-        yield prisma_1.default.houseRenter.create({
-            data,
-        });
-        return yield prisma_1.default.user.create({ data });
-    }
+    // if (data?.role === ENUM_USER_ROLE.HOUSE_OWNER) {
+    //   await prisma.houseOwner.create({ data });
+    // }
+    // if (data?.role === ENUM_USER_ROLE.HOUSE_RENTER) {
+    //   await prisma.houseRenter.create({ data });
+    // }
+    const user = yield prisma_1.default.user.create({ data });
+    return user;
 });
-const createAdmin = (data) => __awaiter(void 0, void 0, void 0, function* () {
-    data.password = yield bcrypt_1.default.hash(data.password, Number(config_1.default.bycrypt_salt_rounds));
-    if (data.role !== user_1.ENUM_USER_ROLE.ADMIN) {
-        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "User role must be admin");
-    }
-    yield yield prisma_1.default.admin.create({
-        data,
-    });
-    const result = prisma_1.default.user.create({ data });
-    return result;
-});
+//get all user service
 const getAllFromDB = (filters, options) => __awaiter(void 0, void 0, void 0, function* () {
     const { limit, page, skip } = paginationHelpers_1.paginationHelpers.calculatePagination(options);
     const { searchTerm } = filters, filterData = __rest(filters, ["searchTerm"]);
@@ -109,6 +96,7 @@ const getAllFromDB = (filters, options) => __awaiter(void 0, void 0, void 0, fun
         data: result,
     };
 });
+// get single user info
 const getByIdFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield prisma_1.default.user.findFirst({
         where: {
@@ -117,6 +105,7 @@ const getByIdFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
     });
     return result;
 });
+// update single user info
 const updatMyProfile = (id, data) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield prisma_1.default.user.update({
         where: {
@@ -126,6 +115,7 @@ const updatMyProfile = (id, data) => __awaiter(void 0, void 0, void 0, function*
     });
     return result;
 });
+// update user into admin
 const makeAdmin = (id, data, user) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: useId, role } = user;
     if (role === user_1.ENUM_USER_ROLE.HOUSE_OWNER ||
@@ -140,6 +130,7 @@ const makeAdmin = (id, data, user) => __awaiter(void 0, void 0, void 0, function
     });
     return result;
 });
+// delete user
 const deleteUserInDB = (id, userRole) => __awaiter(void 0, void 0, void 0, function* () {
     const isUserExist = yield prisma_1.default.user.findFirst({
         where: {
@@ -259,7 +250,6 @@ const deleteUserInDB = (id, userRole) => __awaiter(void 0, void 0, void 0, funct
 });
 exports.UserService = {
     createUser,
-    createAdmin,
     getAllFromDB,
     getByIdFromDB,
     updatMyProfile,

@@ -30,7 +30,7 @@ const http_status_1 = __importDefault(require("http-status"));
 const paginationHelpers_1 = require("../../../helpers/paginationHelpers");
 const house_constant_1 = require("./house.constant");
 const user_1 = require("../../../enums/user");
-//create house
+//create house service
 const insertIntoDB = (user, homeData) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = user;
     const isHouseOwner = yield prisma_1.default.user.findFirst({
@@ -58,7 +58,7 @@ const insertIntoDB = (user, homeData) => __awaiter(void 0, void 0, void 0, funct
     });
     return result;
 });
-//get all houses
+//get all houses service
 const getAllFromDB = (filters, paginationOptions) => __awaiter(void 0, void 0, void 0, function* () {
     const { limit, page, skip } = paginationHelpers_1.paginationHelpers.calculatePagination(paginationOptions);
     const { searchTerm } = filters, filterData = __rest(filters, ["searchTerm"]);

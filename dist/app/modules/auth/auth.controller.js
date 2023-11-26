@@ -29,6 +29,7 @@ const auth_service_1 = require("./auth.service");
 const config_1 = __importDefault(require("../../../config"));
 const http_status_1 = __importDefault(require("http-status"));
 const sendResponse_1 = __importDefault(require("../../../shared/sendResponse"));
+// login user
 const loginUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const loginData = __rest(req.body, []);
     const result = yield auth_service_1.AuthService.loginUser(loginData);
@@ -46,6 +47,7 @@ const loginUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void
         data: others,
     });
 }));
+// get refreshToken
 const refreshToken = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { refreshToken } = req.cookies;
     const result = yield auth_service_1.AuthService.refreshToken(refreshToken);

@@ -19,6 +19,7 @@ const prisma_1 = __importDefault(require("../../../shared/prisma"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const config_1 = __importDefault(require("../../../config"));
 const jwtHelpers_1 = require("../../../helpers/jwtHelpers");
+//login user service
 const loginUser = (loginData) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = loginData;
     const isUserExist = yield prisma_1.default.user.findFirst({
@@ -42,6 +43,7 @@ const loginUser = (loginData) => __awaiter(void 0, void 0, void 0, function* () 
         refreshToken,
     };
 });
+//refresh token service
 const refreshToken = (token) => __awaiter(void 0, void 0, void 0, function* () {
     let verifiedToken = null;
     try {

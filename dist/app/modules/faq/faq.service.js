@@ -30,12 +30,12 @@ const http_status_1 = __importDefault(require("http-status"));
 const prisma_1 = __importDefault(require("../../../shared/prisma"));
 const paginationHelpers_1 = require("../../../helpers/paginationHelpers");
 const faq_constant_1 = require("./faq.constant");
-// creat faq
+// creat faq service
 const insertIntoDB = (data, user) => __awaiter(void 0, void 0, void 0, function* () {
     const { id, role } = user;
     if (role === user_1.ENUM_USER_ROLE.HOUSE_OWNER ||
         role === user_1.ENUM_USER_ROLE.HOUSE_RENTER) {
-        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "Only house ADMIN and SUPER ADMIN can create faq.");
+        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "Only ADMIN and SUPER ADMIN can create faq.");
     }
     data["userId"] = id;
     const result = yield prisma_1.default.faq.create({
@@ -46,7 +46,7 @@ const insertIntoDB = (data, user) => __awaiter(void 0, void 0, void 0, function*
     });
     return result;
 });
-// get all faq
+// get all faq service
 const getAllFromDB = (filters, paginationOptions) => __awaiter(void 0, void 0, void 0, function* () {
     const { limit, page, skip } = paginationHelpers_1.paginationHelpers.calculatePagination(paginationOptions);
     const { searchTerm } = filters, filterData = __rest(filters, ["searchTerm"]);
@@ -96,7 +96,7 @@ const getAllFromDB = (filters, paginationOptions) => __awaiter(void 0, void 0, v
         data: result,
     };
 });
-//get single faq
+//get single faq service
 const getByIdFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield prisma_1.default.faq.findUnique({
         where: {
@@ -108,7 +108,7 @@ const getByIdFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
     });
     return result;
 });
-//   update faq
+//   update faq service
 const updateOneInDB = (id, data, user) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: userId, role } = user;
     const faq = yield prisma_1.default.faq.findFirst({
@@ -135,7 +135,7 @@ const updateOneInDB = (id, data, user) => __awaiter(void 0, void 0, void 0, func
     });
     return result;
 });
-//   delete faq
+//   delete faq service
 const deleteByIdFromDB = (id, user) => __awaiter(void 0, void 0, void 0, function* () {
     const { id: userId, role } = user;
     const deletedFaq = yield prisma_1.default.faq.findFirst({
